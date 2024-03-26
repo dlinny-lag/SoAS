@@ -92,7 +92,7 @@ namespace ScenesEditor.Data
             return scenesContent;
         }
 
-        public static bool Release(this Project project, out string  packagePath)
+        public static bool Release(this Project project, bool isDefault, out string  packagePath)
         {
             string folder = Path.GetDirectoryName(project.Path);
             string file = Path.GetFileNameWithoutExtension(project.Path);
@@ -121,7 +121,7 @@ namespace ScenesEditor.Data
                             string prefix = "Data\\Scenes\\";
                             if (!string.IsNullOrWhiteSpace(project.EspName))
                                 prefix = Path.Combine(prefix, project.EspName) + "\\";
-                            project.SaveToZip(storage, false, false, true, prefix);
+                            project.SaveToZip(storage, isDefault, isDefault, true, prefix);
                         }
                     }
                     File.Delete(packagePath);
@@ -155,7 +155,7 @@ namespace ScenesEditor.Data
             if (includeProgress)
             {
                 string json = JsonConvert.SerializeObject(project.ScenesReadyForRelease, typeof(IList<string>), Formatting.Indented, JsonSerialization.Default);
-                storage.AddFile(ProgressFilename, new MemoryStream(storage.Encoding.GetBytes(json)));
+                storage.AddFile($"{prefix}{ProgressFilename}", new MemoryStream(storage.Encoding.GetBytes(json)));
             }
             foreach (var scene in project.Scenes ?? Array.Empty<Scene>())
             {

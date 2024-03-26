@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Windows.Forms;
 using SceneModel;
 using ScenesEditor.Data;
@@ -9,6 +10,8 @@ namespace ScenesEditor
 {
     public sealed partial class ProjectWorkspace : UserControl
     {
+
+
         private Project project;
         public ProjectWorkspace()
         {
@@ -16,6 +19,8 @@ namespace ScenesEditor
             scenesEditor.MultiSelect = false;
             scenesEditor.SceneDoubleClick += ScenesEditorOnSceneDoubleClick;
             scenesEditor.IsHighlighted = IsReadyForRelease;
+
+            chkDefault.Visible = File.Exists(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "DefaultAS.txt"));
         }
 
         private bool IsReadyForRelease(Scene scene)
@@ -140,7 +145,7 @@ namespace ScenesEditor
             if (project == null)
                 return;
 
-            if (project.Release(out string packagePath))
+            if (project.Release(chkDefault.Checked, out string packagePath))
                 Changed?.Invoke();
 
             string argument = $"/select, \"{packagePath}\"";
