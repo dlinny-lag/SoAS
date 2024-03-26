@@ -1,0 +1,142 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{05382640-35C8-4EDC-B85E-38ACE258B0BE}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <RootNamespace>JsonTreeView</RootNamespace>
+    <AssemblyName>JsonTreeView</AssemblyName>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <Deterministic>true</Deterministic>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.13.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Controls\JTokenTreeUserControl.resx" />
+    <EmbeddedResource Include="Editors\NameDialog.resx">
+      <DependentUpon>NameDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Editors\NameValueDialog.resx">
+      <DependentUpon>NameValueDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Editors\ValueDialog.resx">
+      <DependentUpon>ValueDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="LICENSE" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Editors\NameDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Editors\NameDialog.Designer.cs">
+      <DependentUpon>NameDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Editors\NameValueDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Editors\NameValueDialog.Designer.cs">
+      <DependentUpon>NameValueDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Editors\Validator.cs" />
+    <Compile Include="Editors\ValueDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Editors\ValueDialog.Designer.cs">
+      <DependentUpon>ValueDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Resources\Lang.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Lang.resx</DependentUpon>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\Lang.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Lang.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="AfterSelectEventArgs.cs" />
+    <Compile Include="Controls\JTokenTreeUserControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\JTokenTreeUserControl.Designer.cs" />
+    <Compile Include="Extensions\JTokenTreeNodeActions.cs" />
+    <Compile Include="Extensions\JTokenTreeNodeDeleteException.cs" />
+    <Compile Include="Extensions\JTokenTreeNodePasteException.cs" />
+    <Compile Include="Generic\EditorClipboard.cs" />
+    <Compile Include="Generic\SingleInstanceProvider.cs" />
+    <Compile Include="IJsonTreeNode.cs" />
+    <Compile Include="JArrayContextMenuStrip.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="JArrayTreeNode.cs" />
+    <Compile Include="JObjectContextMenuStrip.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="JObjectTreeNode.cs" />
+    <Compile Include="JPropertyContextMenuStrip.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="JPropertyTreeNode.cs" />
+    <Compile Include="JsonTreeNodeFactory.cs" />
+    <Compile Include="Json\JPropertyEqualityComparer.cs" />
+    <Compile Include="JTokenContextMenuStrip.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="JTokenRoot.cs" />
+    <Compile Include="JTokenTreeNode.cs" />
+    <Compile Include="JValueContextMenuStrip.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="JValueTreeNode.cs" />
+    <Compile Include="KeyStates.cs" />
+    <Compile Include="Linq\ForEachExtension.cs" />
+    <Compile Include="Linq\TreeNodeExtension.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="UnattendedJTokenTypeException.cs" />
+    <Compile Include="Views\JsonTreeView.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Views\JsonTreeView.Designer.cs" />
+    <Compile Include="WrongJsonStreamException.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>

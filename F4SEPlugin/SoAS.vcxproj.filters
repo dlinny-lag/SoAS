@@ -1,0 +1,202 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="..\..\f4se\f4se\GameAPI.cpp">
+      <Filter>f4se</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\f4se\f4se\GameExtraData.cpp">
+      <Filter>f4se</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\f4se\f4se\GameForms.cpp">
+      <Filter>f4se</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\f4se\f4se\GameReferences.cpp">
+      <Filter>f4se</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\f4se\f4se\GameRTTI.cpp">
+      <Filter>f4se</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\f4se\f4se\GameTypes.cpp">
+      <Filter>f4se</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\f4se\f4se\GameUtilities.cpp">
+      <Filter>f4se</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\f4se\f4se\PapyrusArgs.cpp">
+      <Filter>f4se</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\f4se\f4se\PapyrusEvents.cpp">
+      <Filter>f4se</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\f4se\f4se\PapyrusInterfaces.cpp">
+      <Filter>f4se</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\f4se\f4se\PapyrusNativeFunctions.cpp">
+      <Filter>f4se</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\f4se\f4se\PapyrusStruct.cpp">
+      <Filter>f4se</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\f4se\f4se\PapyrusValue.cpp">
+      <Filter>f4se</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\f4se\f4se\PapyrusVM.cpp">
+      <Filter>f4se</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\f4se\f4se_common\Utilities.cpp">
+      <Filter>f4se</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\f4se\f4se_common\Relocation.cpp">
+      <Filter>f4se</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\f4se\f4se\GameData.cpp">
+      <Filter>f4se</Filter>
+    </ClCompile>
+    <ClCompile Include="blake2b-ref.cpp">
+      <Filter>blake2</Filter>
+    </ClCompile>
+    <ClCompile Include="Utils.cpp" />
+    <ClCompile Include="DataHolder.cpp" />
+    <ClCompile Include="Sex.cpp">
+      <Filter>Model</Filter>
+    </ClCompile>
+    <ClCompile Include="CustomAttributes.cpp">
+      <Filter>Model</Filter>
+    </ClCompile>
+    <ClCompile Include="Json.cpp">
+      <Filter>Model</Filter>
+    </ClCompile>
+    <ClCompile Include="DataLoader.cpp" />
+    <ClCompile Include="ILogger.cpp" />
+    <ClCompile Include="SubscriptionsHolder.cpp" />
+    <ClCompile Include="SerializationHelper.cpp" />
+    <ClCompile Include="F4SELogger.cpp" />
+    <ClCompile Include="PapyrusStructHelper.cpp" />
+    <ClCompile Include="ContactStructBuilder.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="PluginAPIExport.hpp" />
+    <ClInclude Include="resource.h" />
+    <ClInclude Include="..\..\f4se\f4se\GameAPI.h">
+      <Filter>f4se</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\f4se\f4se\GameExtraData.h">
+      <Filter>f4se</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\f4se\f4se\GameForms.h">
+      <Filter>f4se</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\f4se\f4se\GameReferences.h">
+      <Filter>f4se</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\f4se\f4se\GameRTTI.h">
+      <Filter>f4se</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\f4se\f4se\GameTypes.h">
+      <Filter>f4se</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\f4se\f4se\GameUtilities.h">
+      <Filter>f4se</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\f4se\f4se\PapyrusArgs.h">
+      <Filter>f4se</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\f4se\f4se\PapyrusEvents.h">
+      <Filter>f4se</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\f4se\f4se\PapyrusInterfaces.h">
+      <Filter>f4se</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\f4se\f4se\PapyrusNativeFunctions.h">
+      <Filter>f4se</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\f4se\f4se\PapyrusStruct.h">
+      <Filter>f4se</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\f4se\f4se\PapyrusValue.h">
+      <Filter>f4se</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\f4se\f4se\PapyrusVM.h">
+      <Filter>f4se</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\f4se\f4se_common\Utilities.h">
+      <Filter>f4se</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\f4se\f4se_common\Relocation.h">
+      <Filter>f4se</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\f4se\f4se\GameObjects.h">
+      <Filter>f4se</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\f4se\f4se\GameData.h">
+      <Filter>f4se</Filter>
+    </ClInclude>
+    <ClInclude Include="StringUtils.hpp" />
+    <ClInclude Include="ExeFileInfo.hpp" />
+    <ClInclude Include="blake2.h">
+      <Filter>blake2</Filter>
+    </ClInclude>
+    <ClInclude Include="blake2-impl.h">
+      <Filter>blake2</Filter>
+    </ClInclude>
+    <ClInclude Include="FormId.hpp" />
+    <ClInclude Include="Utils.h" />
+    <ClInclude Include="DataHolder.h" />
+    <ClInclude Include="ContactArea.h">
+      <Filter>Model</Filter>
+    </ClInclude>
+    <ClInclude Include="Participant.h">
+      <Filter>Model</Filter>
+    </ClInclude>
+    <ClInclude Include="Contact.h">
+      <Filter>Model</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene.h">
+      <Filter>Model</Filter>
+    </ClInclude>
+    <ClInclude Include="Sex.h">
+      <Filter>Model</Filter>
+    </ClInclude>
+    <ClInclude Include="CustomAttributes.h">
+      <Filter>Model</Filter>
+    </ClInclude>
+    <ClInclude Include="Json.h">
+      <Filter>Model</Filter>
+    </ClInclude>
+    <ClInclude Include="handles.hpp" />
+    <ClInclude Include="DataLoader.h" />
+    <ClInclude Include="CustomAttributesSearch.h">
+      <Filter>Model</Filter>
+    </ClInclude>
+    <ClInclude Include="ILogger.h" />
+    <ClInclude Include="ScriptHandle.hpp" />
+    <ClInclude Include="SubscriptionsHolder.h" />
+    <ClInclude Include="SerializationHelper.h" />
+    <ClInclude Include="DllExports.h" />
+    <ClInclude Include="F4SELogger.h" />
+    <ClInclude Include="ContactFlag.hpp" />
+    <ClInclude Include="ContactStructBuilder.h" />
+    <ClInclude Include="PapyrusStructHelper.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="VersionInfo.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="exports.def" />
+    <None Include="..\..\f4se\f4se\GameRTTI.inl">
+      <Filter>f4se</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="f4se">
+      <UniqueIdentifier>{d54f25f1-d1d1-4124-8a54-829df1be9bad}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="blake2">
+      <UniqueIdentifier>{4f6a9343-e68e-4bd9-a846-ae458f7aabc0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Model">
+      <UniqueIdentifier>{44411ba5-c777-4adf-a3f5-6be7ffa67b8c}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

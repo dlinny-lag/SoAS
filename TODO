@@ -1,0 +1,10 @@
+Scanner:
+  filter errors by importance
+
+Scenes:
+  some actors may have additional contact area attached to his natural contact area. for example, human can hold a blade in the arm.
+
+Scenes Papyrus API:
+  get attribute value for desired scene. attribute defined by name and path of names. ex: "Authors", "Imported.Unknown"
+  get scene's custom attribute. a) as a primitive, b) as a struct. if struct's string field points to a complex object -> init the field with a json string
+  get actor's attributes.

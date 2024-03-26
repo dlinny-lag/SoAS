@@ -1,0 +1,15 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <Copyright>Copyright © Dlinny_Lag 2023</Copyright>
+    <Company>Dlinny_Lag</Company>
+    <Authors>Dlinny_Lag</Authors>
+    <NeutralLanguage>en</NeutralLanguage>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Shared.Utils\Shared.Utils.csproj" />
+  </ItemGroup>
+
+</Project>
