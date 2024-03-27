@@ -15,6 +15,8 @@ namespace SceneModel.ContactAreas
 
     public sealed class BodyPart : AreaReference
     {
+        public const int PrintIndent = 2;
+
         private static readonly BodyPart Root = new BodyPart(null){isTopRoot = true};
         private static readonly BodyPart None = new BodyPart(null);
 
@@ -149,10 +151,26 @@ namespace SceneModel.ContactAreas
         public string ToString(uint indent)
         {
             StringBuilder sb = new StringBuilder();
-            sb.Space(indent).AppendLine(Area.Id);
+            sb.Space(indent).Append(Area.Id);
+
+            var variants = Area.GetVariants();
+            if (variants.Length > 1)
+            {
+                sb.Append("(");
+                for(int i = 0; i < variants.Length; i++)
+                {
+                    if (i > 0)
+                        sb.Append(", ");
+                    sb.Append(variants[i].IsAny ? "Any" : variants[i].Prefix);
+                }
+
+                sb.Append(")");
+            }
+            sb.AppendLine();
+
             foreach (BodyPart child in children)
             {
-                sb.Append(child.ToString(indent + 1));
+                sb.Append(child.ToString(indent + PrintIndent));
             }
 
             return sb.ToString();

@@ -50,13 +50,14 @@ namespace SceneModel.Creatures
         public BodyPart[] Body => fakeRoot.Children;
         public AttachmentReference[] Attachments => attachments.ToArray();
 
+
         public sealed override string ToString()
         {
             StringBuilder sb = new StringBuilder();
             sb.AppendLine("Body");
             foreach (BodyPart part in Body)
             {
-                sb.Append(part.ToString(1));
+                sb.Append(part.ToString(BodyPart.PrintIndent));
             }
 
             if (attachments.Count == 0)
@@ -65,7 +66,7 @@ namespace SceneModel.Creatures
             sb.AppendLine("Attachments");
             foreach (AttachmentReference attachment in attachments)
             {
-                sb.Space(1).Append(attachment.Area.Id);
+                sb.Space(BodyPart.PrintIndent).Append(attachment.Area.Id);
             }
 
             return sb.ToString();
