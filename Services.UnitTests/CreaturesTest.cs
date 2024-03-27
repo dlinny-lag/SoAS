@@ -34,6 +34,6 @@ namespace Services.UnitTests
                 File.WriteAllText(Path.Combine(folder, $"{skeleton}.txt"), bodyParts);
             }
         }
-    }
 #endif
+    }
 }
