@@ -7,6 +7,8 @@ namespace SceneModel.Creatures
     {
         private static readonly Dictionary<string, Creature> mapping;
 
+        internal static ICollection<Creature> Supported => mapping.Values;
+
         static CreaturesFactory()
         {
             var references = new Func<Creature>[14]

@@ -22,8 +22,6 @@ namespace Services.UnitTests
             Assert.AreEqual(TagCategoryTypes.ActorTypes, "3P".GetCategory());
             Assert.AreEqual(TagCategoryTypes.ActorTypes, "F_FGHOULM_FGHOULM".GetCategory());
             Assert.AreEqual(TagCategoryTypes.ActorTypes, "F_SMUTANTM_SMUTANTM_SMUTANTM".GetCategory());
-
-            
         }
 
         [TestMethod]
