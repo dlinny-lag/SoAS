@@ -18,9 +18,13 @@ namespace Data
 			data = std::move(other.data);
 			return *this;
 		}
-		std::string to_string() const
+		[[nodiscard]] std::string to_string() const
 		{
 			return data.to_string();
+		}
+		[[nodiscard]] Json::JObject* GetData() const
+		{
+			return data.Clone();
 		}
 	protected:
 		Json::JObject data;

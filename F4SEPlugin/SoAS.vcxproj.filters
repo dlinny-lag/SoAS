@@ -74,6 +74,7 @@
     <ClCompile Include="F4SELogger.cpp" />
     <ClCompile Include="PapyrusStructHelper.cpp" />
     <ClCompile Include="ContactStructBuilder.cpp" />
+    <ClCompile Include="SceneStruct.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="PluginAPIExport.hpp" />
@@ -178,6 +179,7 @@
     <ClInclude Include="ContactFlag.hpp" />
     <ClInclude Include="ContactStructBuilder.h" />
     <ClInclude Include="PapyrusStructHelper.h" />
+    <ClInclude Include="SceneStruct.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="VersionInfo.rc" />

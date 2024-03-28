@@ -1,16 +1,18 @@
 #pragma once
 #include "CustomAttributes.h"
-#include "f4se/GameTypes.h"
-#include "f4se/PapyrusValue.h"
 
 namespace Data
 {
-	struct CustomAttributesSearch : public CustomAttributes
+	struct CustomAttributesSearch
 	{
-		bool TryGetInt(const BSFixedString& path, SInt32& out);
-		bool TryGetFloat(const BSFixedString& path, float& out);
-		bool TryGetString(const BSFixedString& path, BSFixedString& out);
-		bool TryGet(const BSFixedString& path, VMValue& out);
-		bool TryGetStruct(const BSFixedString& path, VMStructTypeInfo* type, VMValue& out);
+		CustomAttributesSearch(const Json::JObject* data): data(data){}
+		bool TryGetInt(const std::vector<std::string_view>& path, SInt32& out) const;
+		bool TryGetFloat(const std::vector<std::string_view>& path, float& out) const;
+		bool TryGetString(const std::vector<std::string_view>& path, std::string& out) const;
+		bool TryGetBool(const std::vector<std::string_view>& path, bool& out) const;
+		bool TryGet(const std::vector<std::string_view>& path, Json::JObject& out) const;
+		bool TryGetArray(const std::vector<std::string_view>& path, Json::JArray& out) const;
+	private:
+		const Json::JObject* data;
 	};
 }

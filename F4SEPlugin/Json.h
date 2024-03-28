@@ -6,7 +6,7 @@
 
 namespace Json
 {
-	enum TokenType // same as Newtonsoft.Json.Linq.JTokenType ( https://www.newtonsoft.com/json/help/html/t_newtonsoft_json_linq_jtokentype.htm )
+	enum class TokenType // same as Newtonsoft.Json.Linq.JTokenType ( https://www.newtonsoft.com/json/help/html/t_newtonsoft_json_linq_jtokentype.htm )
 	{
 		Object = 1,
 		Array = 2,

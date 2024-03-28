@@ -31,7 +31,7 @@ std::unordered_map<std::tuple<std::string_view, UInt64>, std::function<void(cons
 	{{"PAINTYPE", VMValue::kType_Int}, [](const Data::Contact& source, VMValue& toInit){toInit.SetInt(static_cast<SInt32>(source.PainType));}},
 };
 
-bool TrySetFlag(VMValue& toInit, const Data::Contact& source, const std::string_view pattern)
+inline bool TrySetFlag(VMValue& toInit, const Data::Contact& source, const std::string_view pattern)
 {
 	bool isValid;
 	const bool flag = ContactFlag::Is(source, pattern.data(), isValid);

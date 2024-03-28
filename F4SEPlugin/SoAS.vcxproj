@@ -138,6 +138,7 @@
     <ClCompile Include="Json.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="PapyrusStructHelper.cpp" />
+    <ClCompile Include="SceneStruct.cpp" />
     <ClCompile Include="SerializationHelper.cpp" />
     <ClCompile Include="Sex.cpp" />
     <ClCompile Include="SubscriptionsHolder.cpp" />
@@ -186,6 +187,7 @@
     <ClInclude Include="PapyrusStructHelper.h" />
     <ClInclude Include="Participant.h" />
     <ClInclude Include="Scene.h" />
+    <ClInclude Include="SceneStruct.h" />
     <ClInclude Include="ScriptHandle.hpp" />
     <ClInclude Include="SerializationHelper.h" />
     <ClInclude Include="Sex.h" />

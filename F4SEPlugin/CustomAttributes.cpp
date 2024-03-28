@@ -1,27 +1,33 @@
 #include "CustomAttributesSearch.h"
 using namespace Data;
 
-bool CustomAttributesSearch::TryGetInt(const BSFixedString& path, SInt32& out)
+bool CustomAttributesSearch::TryGetInt(const std::vector<std::string_view>& path, SInt32& out) const
 {
 	return false; // TODO: implement
 }
 
-bool CustomAttributesSearch::TryGetFloat(const BSFixedString& path, float& out)
+bool CustomAttributesSearch::TryGetFloat(const std::vector<std::string_view>& path, float& out) const
 {
 	return false; // TODO: implement
 }
 
-bool CustomAttributesSearch::TryGetString(const BSFixedString& path, BSFixedString& out)
+bool CustomAttributesSearch::TryGetString(const std::vector<std::string_view>& path, std::string& out) const
 {
 	return false; // TODO: implement
 }
 
-bool CustomAttributesSearch::TryGet(const BSFixedString& path, VMValue& out)
+bool CustomAttributesSearch::TryGetBool(const std::vector<std::string_view>& path, bool& out) const
 {
 	return false; // TODO: implement
 }
 
-bool CustomAttributesSearch::TryGetStruct(const BSFixedString& path, VMStructTypeInfo* type, VMValue& out)
+bool CustomAttributesSearch::TryGet(const std::vector<std::string_view>& path, Json::JObject& out) const
 {
 	return false; // TODO: implement
 }
+
+bool CustomAttributesSearch::TryGetArray(const std::vector<std::string_view>& path, Json::JArray& out) const
+{
+	return false; // TODO: implement
+}
+

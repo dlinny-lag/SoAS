@@ -181,12 +181,12 @@ bool ReadJValue(HANDLE theFile, Json::JToken& result)
 		return false;
 	switch (type)
 	{
-		case Json::Null:
+		case Json::TokenType::Null:
 			{
 				result = Json::JToken();
 				return true;
 			}
-		case Json::Array:
+		case Json::TokenType::Array:
 			{
 				Json::JArray* arr = ReadJArray(theFile);
 				if (!arr)
@@ -194,7 +194,7 @@ bool ReadJValue(HANDLE theFile, Json::JToken& result)
 				result = std::unique_ptr<Json::JArray>(arr);
 				return true;
 			}
-		case Json::Object:
+		case Json::TokenType::Object:
 			{
 				Json::JObject* obj = ReadJObject(theFile);
 				if (!obj)
@@ -202,7 +202,7 @@ bool ReadJValue(HANDLE theFile, Json::JToken& result)
 				result = std::unique_ptr<Json::JObject>(obj);
 				return true;
 			}
-		case Json::Integer:
+		case Json::TokenType::Integer:
 			{
 				SInt32 val;
 				if (!ReadInt(theFile, val))
@@ -210,7 +210,7 @@ bool ReadJValue(HANDLE theFile, Json::JToken& result)
 				result = val;
 				return true;
 			}
-		case Json::Float:
+		case Json::TokenType::Float:
 			{
 				float val;
 				if (!ReadInt(theFile, val))
@@ -218,7 +218,7 @@ bool ReadJValue(HANDLE theFile, Json::JToken& result)
 				result = val;
 				return true;
 			}
-		case Json::Boolean:
+		case Json::TokenType::Boolean:
 			{
 				bool val;
 				if (!ReadInt(theFile, val))
@@ -226,7 +226,7 @@ bool ReadJValue(HANDLE theFile, Json::JToken& result)
 				result = val;
 				return true;
 			}
-		case Json::String:
+		case Json::TokenType::String:
 			{
 				std::string val;
 				if (!ReadString(theFile, val))
@@ -234,7 +234,7 @@ bool ReadJValue(HANDLE theFile, Json::JToken& result)
 				result = val;
 				return true;
 			}
-		case Json::Property:
+		case Json::TokenType::Property:
 			return false;
 	}
 	return false;
@@ -245,7 +245,7 @@ bool ReadJProperty(HANDLE theFile, std::string& name, Json::JToken& value)
 	Json::TokenType type;
 	if (!ReadInt(theFile, type))
 		return false;
-	if (type != Json::Property)
+	if (type != Json::TokenType::Property)
 		return false;
 	if (!ReadString(theFile, name))
 		return false;
@@ -265,7 +265,7 @@ Json::JObject* ReadJObject(HANDLE theFile)
 		Json::JToken value;
 		if (!ReadJProperty(theFile, name, value))
 			return nullptr;
-		properties.emplace(name, std::move(value));
+		properties.emplace(SU::ToUpper(name), std::move(value));
 	}
 	return new Json::JObject{std::move(properties)};
 }
@@ -291,7 +291,7 @@ bool ReadCustomAttributes(HANDLE theFile, Data::CustomAttributes& result)
 	Json::TokenType type;
 	if (!ReadInt(theFile, type))
 		return false;
-	if (type != Json::Object) // no null expected
+	if (type != Json::TokenType::Object) // no null expected
 		return false;
 	Json::JObject* obj = ReadJObject(theFile);
 	if (!obj)

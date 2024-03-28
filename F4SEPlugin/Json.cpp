@@ -27,6 +27,7 @@ std::string JToken::to_string() const
 		case TokenType::Integer: return std::to_string(AsInt());
 		case TokenType::Float: return std::to_string(AsFloat());
 		case TokenType::Boolean: return AsBool()?"true":"false";
+		case TokenType::Property: break;
 	}
 	throw std::exception("Unsupported token type");
 }

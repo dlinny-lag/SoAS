@@ -1,5 +1,7 @@
 #pragma once
 
+#include <optional>
+
 #include "f4se/PapyrusVM.h"
 #include "f4se/PapyrusNativeFunctions.h"
 #include "f4se/PapyrusEvents.h"
@@ -12,6 +14,7 @@
 
 #include "F4SELogger.h"
 #include "ContactStructBuilder.h"
+#include "SceneStruct.h"
 
 namespace PluginAPIExport
 {
@@ -176,31 +179,36 @@ const char* EXPORT_PAPYRUS_SCRIPT = AS_EXPORT_PAPYRUS_SCRIPT;
 		return res;
 	}
 
+	template<typename TCopy>
+	std::optional<TCopy> GetSceneData(BSFixedString sceneId, const std::function<TCopy(const Data::Scene* scene)>& retrieve)
+	{
+		if (!dataInitialized)
+		{
+			W("Data is not ready"); // perhaps, it should be checked separately
+			return std::optional<TCopy>(std::nullopt);
+		}
+
+		BSReadLocker lock(&dataLock); // lock must remain until scene pointer is in use
+		const Data::Scene* scene = scenes.Find(sceneId.c_str());
+		if (!scene)
+		{
+			W("Scene [%s] not found", sceneId.c_str());
+			return std::optional<TCopy>(std::nullopt);
+		}
+		return retrieve(scene);
+	}
 
 	DECLARE_STRUCT(Participant, AS_EXPORT_PAPYRUS_SCRIPT);
 	VMArray<Participant> GetParticipants(StaticFunctionTag* _, BSFixedString sceneId)
 	{
 		VMArray<Participant> retVal;
 		retVal.SetNone(true);
-		if (!dataInitialized)
-		{
-			W("Data is not ready");
+		const auto participants = GetSceneData<std::vector<Data::Participant>>(sceneId, [](auto scene) {return scene->Participants;});
+		if (!participants.has_value())
 			return retVal;
-		}
-		std::vector<Data::Participant> participants;
-		{	BSReadLocker lock(&dataLock); // lock must remain until scene pointer is in use
-
-			const Data::Scene* scene = scenes.Find(sceneId.c_str());
-			if (!scene)
-			{
-				W("Scene [%s] not found", sceneId.c_str());
-				return retVal;
-			}
-			participants = scene->Participants;
-		}
 
 		retVal.SetNone(false);
-		for (const auto& participant : participants)
+		for (const auto& participant : participants.value())
 		{
 			Participant p;
 			p.Set("Skeleton", BSFixedString(participant.Skeleton.c_str())); // TODO: cache
@@ -231,28 +239,14 @@ const char* EXPORT_PAPYRUS_SCRIPT = AS_EXPORT_PAPYRUS_SCRIPT;
 	{
 		VMArray<VMVariable> retVal;
 		retVal.SetNone(true);
-		if (!dataInitialized)
-		{
-			W("Data is not ready");
+		const auto contacts = GetSceneData<std::vector<Data::ActorsContact>>(sceneId, [](auto scene){return scene->ActorsContacts;});
+		if (!contacts.has_value())
 			return retVal;
-		}
-
-		std::vector<Data::ActorsContact> contacts;
-		{   BSReadLocker lock(&dataLock); // lock must remain until scene pointer is in use
-			
-			const Data::Scene* scene = scenes.Find(sceneId.c_str());
-			if (!scene)
-			{
-				W("Scene [%s] not found", sceneId.c_str());
-				return retVal;
-			}
-			contacts = scene->ActorsContacts;
-		}
 
 		const std::vector<Actor*> actors = ToVector(participants);
 		retVal.SetNone(false);
 
-		for (const auto& contact : contacts)
+		for (const auto& contact : contacts.value())
 		{
 			VMVariable var;
 			const VMValue val = ContactStruct::Create(contact, structName, actors);
@@ -267,27 +261,12 @@ const char* EXPORT_PAPYRUS_SCRIPT = AS_EXPORT_PAPYRUS_SCRIPT;
 	{
 		VMArray<VMVariable> retVal;
 		retVal.SetNone(true);
-		if (!dataInitialized)
-		{
-			W("Data is not ready");
+		const auto contacts = GetSceneData<std::vector<Data::EnvironmentContact>>(sceneId, [](const auto scene){return scene->EnvironmentContacts;});
+		if (!contacts.has_value())
 			return retVal;
-		}
-
-		std::vector<Data::EnvironmentContact> contacts;
-		{	BSReadLocker lock(&dataLock); // lock must remain until scene pointer is in use
-			
-			const Data::Scene* scene = scenes.Find(sceneId.c_str());
-			if (!scene)
-			{
-				W("Scene [%s] not found", sceneId.c_str());
-				return retVal;
-			}
-			contacts = scene->EnvironmentContacts;
-		}
 
 		const std::vector<Actor*> actors = ToVector(participants);
-
-		for(const auto& contact : contacts)
+		for(const auto& contact : contacts.value())
 		{
 			VMVariable var;
 			const VMValue val = ContactStruct::Create(contact, structName, actors);
@@ -298,44 +277,35 @@ const char* EXPORT_PAPYRUS_SCRIPT = AS_EXPORT_PAPYRUS_SCRIPT;
 	}
 
 	DECLARE_STRUCT(SceneStringAttributes, AS_EXPORT_PAPYRUS_SCRIPT);
-	SceneStringAttributes GetAttributes(StaticFunctionTag* _, BSFixedString sceneId)
+	SceneStringAttributes GetStringAttributes(StaticFunctionTag* _, BSFixedString sceneId)
 	{
 		SceneStringAttributes retVal;
 		retVal.SetNone(true);
-		if (!dataInitialized)
-		{
-			W("Data is not ready");
-			return retVal;
-		}
 
-		std::vector<std::string> authors;
-		std::vector<std::string> narrative;
-		std::vector<std::string> feeling;
-		std::vector<std::string> service;
-		std::vector<std::string> attribute;
-		std::vector<std::string> other;
-		{	BSReadLocker lock(&dataLock); // lock must remain until scene pointer is in use
-			
-			const Data::Scene* scene = scenes.Find(sceneId.c_str());
-			if (!scene)
-			{
-				W("Scene [%s] not found", sceneId.c_str());
-				return retVal;
-			}
-			authors = scene->Authors;
-			narrative = scene->Narrative;
-			feeling = scene->Feeling;
-			service = scene->Service;
-			attribute = scene->Attribute;
-			other = scene->Other;
-		}
+		struct StringsData
+		{
+			std::vector<std::string> authors;
+			std::vector<std::string> narrative;
+			std::vector<std::string> feeling;
+			std::vector<std::string> service;
+			std::vector<std::string> attribute;
+			std::vector<std::string> other;
+		};
+
+		const auto data = GetSceneData<StringsData>(sceneId, [](const auto scene)
+		{
+			return StringsData{scene->Authors, scene->Narrative, scene->Feeling, scene->Service, scene->Attribute, scene->Other};
+		});
+		if (!data.has_value())
+			return retVal;
+
 		retVal.SetNone(false);
-		retVal.Set("Authors", BSFixedString(SU::Join(authors, ",").c_str()));
-		retVal.Set("Narrative", BSFixedString(SU::Join(narrative, ",").c_str()));
-		retVal.Set("Feeling", BSFixedString(SU::Join(feeling, ",").c_str()));
-		retVal.Set("Service", BSFixedString(SU::Join(service, ",").c_str()));
-		retVal.Set("Attribute", BSFixedString(SU::Join(attribute, ",").c_str()));
-		retVal.Set("Other", BSFixedString(SU::Join(other, ",").c_str()));
+		retVal.Set("Authors", BSFixedString(SU::Join(data.value().authors, ",").c_str()));
+		retVal.Set("Narrative", BSFixedString(SU::Join(data.value().narrative, ",").c_str()));
+		retVal.Set("Feeling", BSFixedString(SU::Join(data.value().feeling, ",").c_str()));
+		retVal.Set("Service", BSFixedString(SU::Join(data.value().service, ",").c_str()));
+		retVal.Set("Attribute", BSFixedString(SU::Join(data.value().attribute, ",").c_str()));
+		retVal.Set("Other", BSFixedString(SU::Join(data.value().other, ",").c_str()));
 
 		return retVal;
 	}
@@ -344,25 +314,12 @@ const char* EXPORT_PAPYRUS_SCRIPT = AS_EXPORT_PAPYRUS_SCRIPT;
 	{
 		VMArray<BSFixedString> retVal;
 		retVal.SetNone(true);
-		if (!dataInitialized)
-		{
-			W("Data is not ready");
+		const auto tags = GetSceneData<std::vector<std::string>>(sceneId, [](auto scene){return scene->Tags;});
+		if (!tags.has_value())
 			return retVal;
-		}
 
-		std::vector<std::string> tags;
-		{	BSReadLocker lock(&dataLock); // lock must remain until scene pointer is in use
-			
-			const Data::Scene* scene = scenes.Find(sceneId.c_str());
-			if (!scene)
-			{
-				W("Scene [%s] not found", sceneId.c_str());
-				return retVal;
-			}
-			tags = scene->Tags;
-		}
 		retVal.SetNone(false);
-		for(const auto& furn : tags)
+		for(const auto& furn : tags.value())
 		{
 			BSFixedString f(furn.c_str());
 			retVal.Push(&f, false);
@@ -374,25 +331,13 @@ const char* EXPORT_PAPYRUS_SCRIPT = AS_EXPORT_PAPYRUS_SCRIPT;
 	{
 		VMArray<BSFixedString> retVal;
 		retVal.SetNone(true);
-		if (!dataInitialized)
-		{
-			W("Data is not ready");
-			return retVal;
-		}
 
-		std::vector<std::string> furniture;
-		{	BSReadLocker lock(&dataLock); // lock must remain until scene pointer is in use
-			
-			const Data::Scene* scene = scenes.Find(sceneId.c_str());
-			if (!scene)
-			{
-				W("Scene [%s] not found", sceneId.c_str());
-				return retVal;
-			}
-			furniture = scene->Furniture;
-		}
+		const auto furniture = GetSceneData<std::vector<std::string>>(sceneId, [](auto scene){return scene->Furniture;});
+		if (!furniture.has_value())
+			return retVal;
+
 		retVal.SetNone(false);
-		for(const auto& furn : furniture)
+		for(const auto& furn : furniture.value())
 		{
 			BSFixedString f(furn.c_str());
 			retVal.Push(&f, false);
@@ -400,6 +345,28 @@ const char* EXPORT_PAPYRUS_SCRIPT = AS_EXPORT_PAPYRUS_SCRIPT;
 		return retVal;
 	}
 
+	inline VMVariable ToVar(VMValue& val)
+	{
+		VMVariable r;
+		r.UnpackVariable(&val);
+		return r;
+	}
+	inline VMVariable NoneVar()
+	{
+		VMVariable r;
+		return r;
+	}
+
+	VMVariable GetSceneAttributes(StaticFunctionTag* _, BSFixedString sceneId, BSFixedString structName)
+	{
+		// TODO: update when predefined scene attributes introduced
+		const auto custom = GetSceneData<std::unique_ptr<Json::JObject>>(sceneId, [](auto scene){return std::unique_ptr<Json::JObject>(scene->Custom.GetData());});
+		if (!custom.has_value())
+			return NoneVar();
+
+		VMValue retVal = SceneStruct::Create(custom.value().get(), structName);
+		return ToVar(retVal);
+	}
 
 	bool Register(VirtualMachine* vm)
 	{
@@ -440,14 +407,17 @@ const char* EXPORT_PAPYRUS_SCRIPT = AS_EXPORT_PAPYRUS_SCRIPT;
 		vm->RegisterFunction(new NativeFunction3("GetEnvironmentContacts", EXPORT_PAPYRUS_SCRIPT, GetEnvironmentContacts, vm));
 		vm->SetFunctionFlags(EXPORT_PAPYRUS_SCRIPT, "GetEnvironmentContacts", IFunction::kFunctionFlag_NoWait);
 
-		vm->RegisterFunction(new NativeFunction1("GetAttributes", EXPORT_PAPYRUS_SCRIPT, GetAttributes, vm));
-		vm->SetFunctionFlags(EXPORT_PAPYRUS_SCRIPT, "GetAttributes", IFunction::kFunctionFlag_NoWait);
+		vm->RegisterFunction(new NativeFunction1("GetStringAttributes", EXPORT_PAPYRUS_SCRIPT, GetStringAttributes, vm));
+		vm->SetFunctionFlags(EXPORT_PAPYRUS_SCRIPT, "GetStringAttributes", IFunction::kFunctionFlag_NoWait);
 
 		vm->RegisterFunction(new NativeFunction1("GetTags", EXPORT_PAPYRUS_SCRIPT, GetTags, vm));
 		vm->SetFunctionFlags(EXPORT_PAPYRUS_SCRIPT, "GetTags", IFunction::kFunctionFlag_NoWait);
 
 		vm->RegisterFunction(new NativeFunction1("GetFurnitureTags", EXPORT_PAPYRUS_SCRIPT, GetFurnitureTags, vm));
 		vm->SetFunctionFlags(EXPORT_PAPYRUS_SCRIPT, "GetFurnitureTags", IFunction::kFunctionFlag_NoWait);
+
+		vm->RegisterFunction(new NativeFunction2("GetSceneAttributes", EXPORT_PAPYRUS_SCRIPT, GetSceneAttributes, vm));
+		vm->SetFunctionFlags(EXPORT_PAPYRUS_SCRIPT, "GetSceneAttributes", IFunction::kFunctionFlag_NoWait);
 
 		return true;
 	}

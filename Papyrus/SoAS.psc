@@ -127,9 +127,9 @@ struct SceneStringAttributes
     string Other
 endstruct 
 ; returns
-;   summary of categorized tags 
+;   summary of the categorized tags 
 ;   None - scene not found or data is been reloading
-SceneStringAttributes function GetAttributes(string sceneId) global native
+SceneStringAttributes function GetStringAttributes(string sceneId) global native
 
 ; returns 
 ;   tags associated with the scene
@@ -141,3 +141,12 @@ string[] function GetTags(string sceneId) global native
 ;   None - scene not found or data is been reloading
 string[] function GetFurnitureTags(string sceneId) global native
 
+
+; returns 
+;   struct object with fields populated by exsting data
+;     fields mapped by name, case insensitivy
+;     in case of type mismatch, field has default value for its type.
+;     in case when stored value is an object or an array, value converted to the JSON string
+;   None - scene not found or structName does not represent existing structure
+; Note: naming convention: to retrieve custom attributes field name need to be declared with Custom_ prefix, for example Custom_MyField
+var function GetSceneAttributes(string sceneId, string structName) global native
