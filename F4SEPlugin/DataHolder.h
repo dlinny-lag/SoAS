@@ -1,5 +1,4 @@
 #pragma once
-#include "DllExports.h"
 #include <string>
 #include <unordered_map>
 #include <ostream>
@@ -18,8 +17,8 @@ public:
 
 	bool Deserialize(const std::string& filePath, std::vector<std::string>& errors);
 	[[nodiscard]] size_t Size() const {return scenes.size();}
-	DLLEXPORT void Dump(std::ostream& stream) const;
+	void Dump(std::ostream& stream) const;
 
-	DLLEXPORT const Data::Scene* Find(const char* sceneId) const;
+	const Data::Scene* Find(const char* sceneId) const;
 };
 

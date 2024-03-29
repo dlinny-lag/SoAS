@@ -1,6 +1,5 @@
 #pragma once
-#include "DllExports.h"
-
+#include <string>
 struct ILogger
 {
 	enum LogLevel
@@ -14,30 +13,30 @@ struct ILogger
 	ILogger() = default;
 	virtual ~ILogger() = default;
 
-	DLLEXPORT static void Init(ILogger* logger);
-	DLLEXPORT static void Log(const char * fmt, ...);
+	static void Init(ILogger* logger);
+	static void Log(const char * fmt, ...);
 
-	DLLEXPORT static LogLevel Level;
-	DLLEXPORT static LogLevel GetLevel();
-	DLLEXPORT static void SetLevel(LogLevel level);
+	static LogLevel Level;
+	static LogLevel GetLevel();
+	static void SetLevel(LogLevel level);
 
-	DLLEXPORT static void Log(LogLevel level, const char * fmt, ...);
+	static void Log(LogLevel level, const char * fmt, ...);
 
-	DLLEXPORT static void LogDebug(const char* fmt, ...);
-	DLLEXPORT static void LogInfo(const char* fmt, ...);
-	DLLEXPORT static void LogWarning(const char* fmt, ...);
-	DLLEXPORT static void LogError(const char* fmt, ...);
+	static void LogDebug(const char* fmt, ...);
+	static void LogInfo(const char* fmt, ...);
+	static void LogWarning(const char* fmt, ...);
+	static void LogError(const char* fmt, ...);
 
-	DLLEXPORT static void Log(LogLevel level, const char * fmt, va_list args);
+	static void Log(LogLevel level, const char * fmt, va_list args);
 
-	DLLEXPORT static void LogDebug(const char* fmt, va_list args);
-	DLLEXPORT static void LogInfo(const char* fmt, va_list args);
-	DLLEXPORT static void LogWarning(const char* fmt, va_list args);
-	DLLEXPORT static void LogError(const char* fmt, va_list args);
+	static void LogDebug(const char* fmt, va_list args);
+	static void LogInfo(const char* fmt, va_list args);
+	static void LogWarning(const char* fmt, va_list args);
+	static void LogError(const char* fmt, va_list args);
 
 protected:
 	virtual void LogImpl(const char * fmt, va_list args) = 0;
-	DLLEXPORT virtual std::string LevelToString(LogLevel level);
+	virtual std::string LevelToString(LogLevel level);
 };
 
 // log/debug

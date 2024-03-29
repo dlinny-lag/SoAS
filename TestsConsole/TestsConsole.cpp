@@ -1,9 +1,5 @@
 // TestsConsole.cpp : This file contains the 'main' function. Program execution begins and ends there.
 //
-// I'm too lazy, so just duplicate
-typedef unsigned long		UInt32;
-typedef signed long			SInt32;
-
 #include <iostream>
 #include "ContactFlag.hpp"
 #include "StringUtils.hpp"

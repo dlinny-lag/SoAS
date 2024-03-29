@@ -176,9 +176,9 @@
     <ClInclude Include="CustomAttributesSearch.h" />
     <ClInclude Include="DataHolder.h" />
     <ClInclude Include="DataLoader.h" />
-    <ClInclude Include="DllExports.h" />
     <ClInclude Include="ExeFileInfo.hpp" />
     <ClInclude Include="F4SELogger.h" />
+    <ClInclude Include="F4SETypeDefs.h" />
     <ClInclude Include="FormId.hpp" />
     <ClInclude Include="Contact.h" />
     <ClInclude Include="handles.hpp" />

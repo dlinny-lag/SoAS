@@ -15,8 +15,8 @@ DataHolder data;
 std::condition_variable completion;
 std::mutex completion_mutex;
 
-constexpr char* exchangeFile = "__SoAS_DATA.bin";
-constexpr char* exeName = "ScenesEditor.exe";
+constexpr const char* const exchangeFile = "__SoAS_DATA.bin";
+constexpr const char* const exeName = "ScenesEditor.exe";
 
 const char * LocalRunFlagFile = "ASLocalRun.txt";
 

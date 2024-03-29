@@ -90,14 +90,17 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\F4SEPlugin\blake2b-ref.cpp" />
+    <ClCompile Include="..\F4SEPlugin\CustomAttributes.cpp" />
+    <ClCompile Include="..\F4SEPlugin\DataHolder.cpp" />
+    <ClCompile Include="..\F4SEPlugin\DataLoader.cpp" />
+    <ClCompile Include="..\F4SEPlugin\ILogger.cpp" />
+    <ClCompile Include="..\F4SEPlugin\Json.cpp" />
+    <ClCompile Include="..\F4SEPlugin\Sex.cpp" />
     <ClCompile Include="TestsConsole.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\F4SEPlugin\SoAS.vcxproj">
-      <Project>{378cb801-7628-45aa-a1ed-ce89c922c52a}</Project>
-      <UseLibraryDependencyInputs>false</UseLibraryDependencyInputs>
-      <CopyLocalSatelliteAssemblies>true</CopyLocalSatelliteAssemblies>
-    </ProjectReference>
+    <ClInclude Include="..\F4SEPlugin\StringUtils.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

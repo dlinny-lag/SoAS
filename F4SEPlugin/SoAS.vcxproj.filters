@@ -174,12 +174,12 @@
     <ClInclude Include="ScriptHandle.hpp" />
     <ClInclude Include="SubscriptionsHolder.h" />
     <ClInclude Include="SerializationHelper.h" />
-    <ClInclude Include="DllExports.h" />
     <ClInclude Include="F4SELogger.h" />
     <ClInclude Include="ContactFlag.hpp" />
     <ClInclude Include="ContactStructBuilder.h" />
     <ClInclude Include="PapyrusStructHelper.h" />
     <ClInclude Include="SceneStruct.h" />
+    <ClInclude Include="F4SETypeDefs.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="VersionInfo.rc" />

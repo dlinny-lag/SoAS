@@ -3,7 +3,9 @@
 #include <unordered_map>
 #include <variant>
 #include <sstream>
-#include "DllExports.h"
+#ifndef SInt32
+	#include "F4SETypeDefs.h"
+#endif
 
 namespace Json
 {
@@ -36,7 +38,7 @@ namespace Json
 		JToken(bool value) noexcept : Type(TokenType::Boolean), AS(value){}
 		~JToken() = default;
 
-		DLLEXPORT JToken(const JToken& other);
+		JToken(const JToken& other);
 		JToken& operator=(const JToken& other) = delete;
 		void swap(JToken& other) noexcept
 		{
@@ -73,7 +75,7 @@ namespace Json
 		[[nodiscard]] float AsFloat() const {return std::get<5>(AS);}
 		[[nodiscard]] bool AsBool() const {return std::get<6>(AS);}
 
-		DLLEXPORT [[nodiscard]] std::string to_string() const;
+		[[nodiscard]] std::string to_string() const;
 	};
 
 

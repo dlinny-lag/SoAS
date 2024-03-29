@@ -2,7 +2,9 @@
 #include "ContactArea.h"
 #include <ostream>
 #include <functional>
-
+#ifndef SInt32
+	#include "F4SETypeDefs.h"
+#endif
 namespace Data
 {
 	enum class PainType

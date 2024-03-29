@@ -1,5 +1,8 @@
 #pragma once
 #include <string>
+#ifndef SInt32
+	#include "F4SETypeDefs.h"
+#endif
 namespace Data
 {
 	struct Sex final
