@@ -57,6 +57,12 @@ VMValue SceneStruct::Create(const Json::JObject* data, BSFixedString structName)
 					std::string retVal;
 					if (searcher.TryGetString(splitted, retVal))
 						return FromString(retVal);
+					std::unique_ptr<Json::JObject> obj;
+					if (searcher.TryGet(splitted, obj))
+						return FromString(obj->to_string());
+					std::unique_ptr<Json::JArray> arr;
+					if (searcher.TryGetArray(splitted, arr))
+						return FromString(arr->to_string());
 				}
 				break;
 				case VMValue::kType_Bool:
