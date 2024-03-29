@@ -74,18 +74,27 @@ int main()
         
         const Data::CustomAttributesSearch searcher(data.get());
         SInt32 intVal;
-        const std::string propName = SU::ToUpper("IntVal");
-        const bool result = searcher.TryGetInt(std::vector<std::string_view>{propName}, intVal);
+        std::string propName = SU::ToUpper("IntVal");
+        bool result = searcher.TryGetInt(std::vector<std::string_view>{propName}, intVal);
         if (result)
             ILogger::Log("IntValue=%d", intVal);
         else
             ILogger::Log("IntValue failed");
+        propName = SU::ToUpper("ArrayVal");
+        std::unique_ptr<Json::JArray> arr;
+        result = searcher.TryGetArray(std::vector<std::string_view>{propName}, arr);
+        if (result)
+            ILogger::Log("Array %s", arr->to_string().c_str());
+        else
+            ILogger::Log("Array failed");
     }
     scene = nullptr;
     DataLoader::StartLoading(OnDataLoad);
     DataLoader::WaitForComplete();
     DataLoader::GetResult(content);
     scene = content.Find("Gray Spanking 02 Staged");
+    if (!scene)
+        return 0;
     for(const Data::ActorsContact& contact : scene->ActorsContacts)
     {
         bool isValid;
@@ -95,6 +104,8 @@ int main()
     	const bool isLeftArm = ContactFlag::Is(contact.From, "Is_Left_Arm", isValid);
         ILogger::Log("IsLeftArm=%s", S(isLeftArm));
     }
+
+    return 0;
 }
 
 // see https://stackoverflow.com/questions/35310117/debug-assertion-failed-expression-acrt-first-block-header
