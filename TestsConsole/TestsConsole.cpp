@@ -9,6 +9,7 @@ typedef signed long			SInt32;
 #include "StringUtils.hpp"
 #include "DataLoader.h"
 #include "ILogger.h"
+#include "CustomAttributesSearch.h"
 
 struct ConsoleLogger : ILogger
 {
@@ -67,6 +68,19 @@ int main()
     DataLoader::GetResult(content);
     content.Dump(std::cout);
     auto scene = content.Find("SE Atomic Blowjob");
+
+    {
+		const auto data = std::unique_ptr<Json::JObject>(scene->Custom.GetData());
+        
+        const Data::CustomAttributesSearch searcher(data.get());
+        SInt32 intVal;
+        const std::string propName = SU::ToUpper("IntVal");
+        const bool result = searcher.TryGetInt(std::vector<std::string_view>{propName}, intVal);
+        if (result)
+            ILogger::Log("IntValue=%d", intVal);
+        else
+            ILogger::Log("IntValue failed");
+    }
     scene = nullptr;
     DataLoader::StartLoading(OnDataLoad);
     DataLoader::WaitForComplete();

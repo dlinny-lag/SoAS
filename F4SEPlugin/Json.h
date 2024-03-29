@@ -3,6 +3,7 @@
 #include <unordered_map>
 #include <variant>
 #include <sstream>
+#include "DllExports.h"
 
 namespace Json
 {
@@ -35,7 +36,7 @@ namespace Json
 		JToken(bool value) noexcept : Type(TokenType::Boolean), AS(value){}
 		~JToken() = default;
 
-		JToken(const JToken& other);
+		DLLEXPORT JToken(const JToken& other);
 		JToken& operator=(const JToken& other) = delete;
 		void swap(JToken& other) noexcept
 		{
@@ -55,6 +56,8 @@ namespace Json
 			return *this;
 		}
 
+		[[nodiscard]] TokenType GetType() const noexcept {return Type;}
+
 		[[nodiscard]] bool IsNull() const noexcept {return TokenType::Null == Type;}
 		[[nodiscard]] bool IsObject() const noexcept {return TokenType::Object == Type;}
 		[[nodiscard]] bool IsArray() const noexcept {return TokenType::Array == Type;}
@@ -70,7 +73,7 @@ namespace Json
 		[[nodiscard]] float AsFloat() const {return std::get<5>(AS);}
 		[[nodiscard]] bool AsBool() const {return std::get<6>(AS);}
 
-		[[nodiscard]] std::string to_string() const;
+		DLLEXPORT [[nodiscard]] std::string to_string() const;
 	};
 
 
