@@ -12,5 +12,7 @@ namespace ScenesEditor
         public static readonly string ApplicationDataFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), AppRegistry.Manufacturer, AppName);
 
         public static readonly FurnitureLibrary FurnitureLibrary = new FurnitureLibrary(); // TODO: move to appropriate place
+
+        public static readonly bool EditDefaultDataSetMode = File.Exists(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "DefaultAS.txt"));
     }
 }

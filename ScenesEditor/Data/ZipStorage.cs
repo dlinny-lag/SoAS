@@ -16,7 +16,7 @@ namespace ScenesEditor.Data
         /// <summary>
         /// For the text files
         /// </summary>
-        public readonly Encoding Encoding = Encoding.UTF8;
+        public Encoding Encoding => Encoding.UTF8;
 
         private readonly string zipFilePath;
         private bool disposed = false;
@@ -29,6 +29,9 @@ namespace ScenesEditor.Data
                 throw new ArgumentOutOfRangeException(nameof(path), $@"File {path} does not exist");
             zipFilePath = path;
         }
+
+        public string Path => zipFilePath;
+        public FileAccess Access { get; }
 
         void EnsureInitialized()
         {
@@ -63,7 +66,6 @@ namespace ScenesEditor.Data
             return entry.Open();
         }
 
-        public FileAccess Access { get; }
         public IFileDescriptor[] GetFiles()
         {
             if (Access.HasFlag(FileAccess.Write) && !File.Exists(zipFilePath))

@@ -16,16 +16,25 @@ namespace ScenesEditor
         {
             InitializeComponent();
             Text = Title;
-            projectWorkspace.Visible = false;
-            projectsListControl.Visible = true;
-
-            projectsListControl.SetData(ProjectSerialization.List());
-            UpdateTitle();
-            projectWorkspace.Changed += () =>
+            if (ApplicationSettings.EditDefaultDataSetMode)
             {
-                dirty = true;
-                UpdateTitle();
-            };
+                projectWorkspace.Visible = false;
+                projectsListControl.Visible = false;
+            }
+            else
+            {
+                projectWorkspace.Visible = false;
+                projectsListControl.Visible = true;
+
+                projectsListControl.SetData(ProjectSerialization.List());
+                projectWorkspace.Changed += () =>
+                {
+                    dirty = true;
+                    UpdateTitle();
+                };
+            }
+
+            UpdateTitle();
             ApplicationSettings.FurnitureLibrary.Load();
         }
 
@@ -43,7 +52,20 @@ namespace ScenesEditor
         protected override void OnShown(EventArgs e)
         {
             base.OnShown(e);
-            projectsListControl.Selected += ProjectsListControlOnSelected;
+            if (ApplicationSettings.EditDefaultDataSetMode)
+            {
+                var project = projectWorkspace.LoadFromDefaultDataSet();
+                if (project == null)
+                {
+                    Close();
+                    return;
+                }
+                OpenProject(project);
+            }
+            else
+            {
+                projectsListControl.Selected += ProjectsListControlOnSelected;
+            }
         }
 
         private void ProjectsListControlOnSelected(ProjectHeader project)

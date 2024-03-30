@@ -2,17 +2,22 @@
 using System.IO;
 using System.Linq;
 using System.Security;
+using System.Text;
 
 namespace Shared.Utils
 {
     public class FileSystemFilesStorage : IFilesStorage
     {
+        public Encoding Encoding => Encoding.UTF8;
+
         private readonly DirectoryInfo folderInfo;
         public FileSystemFilesStorage(string folderPath, bool readOnly = true)
         {
             folderInfo = new DirectoryInfo(folderPath);
             Access = readOnly ? FileAccess.Read : FileAccess.ReadWrite;
         }
+
+        public string Path => folderInfo.FullName;
 
         public FileAccess Access { get; }
 
@@ -25,7 +30,18 @@ namespace Shared.Utils
         {
             if (!Access.HasFlag(FileAccess.Write))
                 throw new SecurityException("Storage is in readonly mode");
-            throw new System.NotImplementedException();
+
+            string fullPath = System.IO.Path.Combine(folderInfo.FullName, relativeFilePath);
+            SaveFile(content, fullPath);
+            return new FileSystemFileDescriptor(new FileInfo(fullPath));
+        }
+
+        private static void SaveFile(Stream content, string fullPath)
+        {
+            using (FileStream fs = new FileStream(fullPath, FileMode.Create))
+            {
+                content.CopyTo(fs);
+            }
         }
 
         public IFileDescriptor FindFile(string relativePath)
@@ -42,14 +58,15 @@ namespace Shared.Utils
         {
             if (!Access.HasFlag(FileAccess.Write))
                 throw new SecurityException("Storage is in readonly mode");
-            throw new System.NotImplementedException();
+            File.Delete(toDelete.FullName);
         }
 
         public void UpdateFile(IFileDescriptor existing, Stream newContent)
         {
             if (!Access.HasFlag(FileAccess.Write))
                 throw new SecurityException("Storage is in readonly mode");
-            throw new System.NotImplementedException();
+            // TODO: potential inconsistency: existing may come from another storage
+            SaveFile(newContent, existing.FullName);
         }
     }
 }

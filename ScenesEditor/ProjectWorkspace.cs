@@ -10,8 +10,6 @@ namespace ScenesEditor
 {
     public sealed partial class ProjectWorkspace : UserControl
     {
-
-
         private Project project;
         public ProjectWorkspace()
         {
@@ -19,8 +17,6 @@ namespace ScenesEditor
             scenesEditor.MultiSelect = false;
             scenesEditor.SceneDoubleClick += ScenesEditorOnSceneDoubleClick;
             scenesEditor.IsHighlighted = IsReadyForRelease;
-
-            chkDefault.Visible = File.Exists(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "DefaultAS.txt"));
         }
 
         private bool IsReadyForRelease(Scene scene)
@@ -140,16 +136,42 @@ namespace ScenesEditor
             }
         }
 
+        private static string DefaultDataSetFolder;
+
+        internal Project LoadFromDefaultDataSet()
+        {
+            if (!ApplicationSettings.EditDefaultDataSetMode)
+                throw new InvalidOperationException("Edit default data set mode must be on");
+            if (string.IsNullOrWhiteSpace(DefaultDataSetFolder) || !Directory.Exists(DefaultDataSetFolder))
+            {
+                using (FolderBrowserDialog dlg = new FolderBrowserDialog{ShowNewFolderButton = false, Description = @"Select Scenes folder"})
+                {
+                    if (DialogResult.OK != dlg.ShowDialog())
+                        return null;
+
+                    DefaultDataSetFolder = dlg.SelectedPath;
+                }
+            }
+            return ProjectSerialization.LoadDefaultDataSetFromFolder(DefaultDataSetFolder);
+        }
+
         private void releaseBtn_Click(object sender, EventArgs e)
         {
             if (project == null)
                 return;
 
-            if (project.Release(chkDefault.Checked, out string packagePath))
+            if (ApplicationSettings.EditDefaultDataSetMode)
+            {
+                project.ReleaseDefaultDataSet(DefaultDataSetFolder);
+                return;
+            }
+
+            if (project.Release(out string packagePath))
                 Changed?.Invoke();
 
             string argument = $"/select, \"{packagePath}\"";
             System.Diagnostics.Process.Start("explorer.exe", argument);
         }
+
     }
 }

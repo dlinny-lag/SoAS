@@ -446,7 +446,7 @@ namespace ScenesEditor
                         string path = $@"Data\Scenes\Furniture\{pair.Key.ToString()}{FurnitureSourceFileExt}";
                         sw.Flush();
                         stream.Position = 0;
-                        storage.AddFile(path, stream);
+                        storage.AddFile(path.ValidateFilename(), stream);
                     }
                 }
             }

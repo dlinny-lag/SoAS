@@ -34,7 +34,6 @@ namespace ScenesEditor
             this.deleteBtn = new System.Windows.Forms.Button();
             this.debugBtn = new System.Windows.Forms.Button();
             this.releaseBtn = new System.Windows.Forms.Button();
-            this.chkDefault = new System.Windows.Forms.CheckBox();
             this.scenesEditor = new ScenesEditor.ScenesEditorControl();
             this.SuspendLayout();
             // 
@@ -91,17 +90,6 @@ namespace ScenesEditor
             this.releaseBtn.UseVisualStyleBackColor = true;
             this.releaseBtn.Click += new System.EventHandler(this.releaseBtn_Click);
             // 
-            // chkDefault
-            // 
-            this.chkDefault.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.chkDefault.AutoSize = true;
-            this.chkDefault.Location = new System.Drawing.Point(452, 7);
-            this.chkDefault.Name = "chkDefault";
-            this.chkDefault.Size = new System.Drawing.Size(60, 17);
-            this.chkDefault.TabIndex = 6;
-            this.chkDefault.Text = "Default";
-            this.chkDefault.UseVisualStyleBackColor = true;
-            // 
             // scenesEditor
             // 
             this.scenesEditor.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
@@ -119,7 +107,6 @@ namespace ScenesEditor
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.Controls.Add(this.chkDefault);
             this.Controls.Add(this.releaseBtn);
             this.Controls.Add(this.debugBtn);
             this.Controls.Add(this.deleteBtn);
@@ -129,7 +116,6 @@ namespace ScenesEditor
             this.Name = "ProjectWorkspace";
             this.Size = new System.Drawing.Size(764, 429);
             this.ResumeLayout(false);
-            this.PerformLayout();
 
         }
 
@@ -141,6 +127,5 @@ namespace ScenesEditor
         private System.Windows.Forms.Button deleteBtn;
         private System.Windows.Forms.Button debugBtn;
         private System.Windows.Forms.Button releaseBtn;
-        private System.Windows.Forms.CheckBox chkDefault;
     }
 }

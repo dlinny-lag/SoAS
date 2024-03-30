@@ -37,6 +37,8 @@ namespace ScenesEditor.Data
 
         public static void Save(this Project project, string folderPath)
         {
+            if (ApplicationSettings.EditDefaultDataSetMode)
+                return; // TODO: redesign to avoid mix of responsibilities here
             folderPath = folderPath ?? Environment.GetFolderPath(Environment.SpecialFolder.CommonDocuments);
             bool pathChanged = InitPath(project, folderPath);
 
@@ -48,7 +50,7 @@ namespace ScenesEditor.Data
             using (var storage = new ZipStorage(tmpFile, false))
             {
                 project.Updated = DateTimeOffset.Now;
-                SaveToZip(project, storage, true, true, false);
+                Save(project, storage, true, true, false);
             }
             File.Delete(project.Path);
             File.Move(tmpFile, project.Path);
@@ -85,14 +87,20 @@ namespace ScenesEditor.Data
             var tmpFileName = Path.GetTempFileName();
             using (var storage = new ZipStorage(tmpFileName, false))
             {
-                project.SaveToZip(storage, false, true, false);
+                project.Save(storage, false, true, false);
             }
             var scenesContent = File.ReadAllBytes(tmpFileName);
             File.Delete(tmpFileName);
             return scenesContent;
         }
 
-        public static bool Release(this Project project, bool isDefault, out string  packagePath)
+        public static void ReleaseDefaultDataSet(this Project project, string path)
+        {
+            IFilesStorage fileStorage = new FileSystemFilesStorage(path, false);
+            project.Save(fileStorage, true, false, true);
+        }
+
+        public static bool Release(this Project project, out string  packagePath)
         {
             string folder = Path.GetDirectoryName(project.Path);
             string file = Path.GetFileNameWithoutExtension(project.Path);
@@ -121,7 +129,7 @@ namespace ScenesEditor.Data
                             string prefix = "Data\\Scenes\\";
                             if (!string.IsNullOrWhiteSpace(project.EspName))
                                 prefix = Path.Combine(prefix, project.EspName) + "\\";
-                            project.SaveToZip(storage, isDefault, isDefault, true, prefix);
+                            project.Save(storage, false, false, true, prefix);
                         }
                     }
                     File.Delete(packagePath);
@@ -142,10 +150,11 @@ namespace ScenesEditor.Data
             return project.UpdateSettings();
         }
 
-        private static void SaveToZip(this Project project, ZipStorage storage, bool includeProgress, bool includeInfo, bool formatted, string prefix = "")
+        private static void Save(this Project project, IFilesStorage storage, bool includeProgress, bool includeInfo, bool formatted, string prefix = "")
         {
             if (!string.IsNullOrWhiteSpace(prefix) && !prefix.EndsWith("\\"))
                 throw new ArgumentException("Prefix must be a folder with \\ at the end");
+            
             if (includeInfo)
             {
                 string json = JsonConvert.SerializeObject(project, typeof(ProjectHeader), Formatting.Indented, JsonSerialization.Default);
@@ -157,56 +166,71 @@ namespace ScenesEditor.Data
                 string json = JsonConvert.SerializeObject(project.ScenesReadyForRelease, typeof(IList<string>), Formatting.Indented, JsonSerialization.Default);
                 storage.AddFile($"{prefix}{ProgressFilename}", new MemoryStream(storage.Encoding.GetBytes(json)));
             }
+
             foreach (var scene in project.Scenes ?? Array.Empty<Scene>())
             {
                 string json = scene.ToJson(formatted);
-                storage.AddFile($"{prefix}{scene.Id}.{SceneFileExtension}", new MemoryStream(storage.Encoding.GetBytes(json)));
+                storage.AddFile($"{prefix}{scene.Id.ValidateFilename()}.{SceneFileExtension}", new MemoryStream(storage.Encoding.GetBytes(json)));
             }
+        }
+
+        public static Project LoadDefaultDataSetFromFolder(string path)
+        {
+            var storage = new FileSystemFilesStorage(path, true);
+            return LoadFromStorage(storage);
         }
 
         public static Project Load(string filePath)
         {
             using (var storage = new ZipStorage(filePath, true))
             {
-                var files = storage.GetFiles();
-                if (files.Length == 0)
-                    return null;
-
-                Project retVal = null;
-                string[] readyForeRelease = Array.Empty<string>();
-                BatchDeserializer deserializer = new BatchDeserializer(files.Length - 1);
-                deserializer.Start();
-                foreach (var file in files)
-                {
-                    if (file.FullName == InfoFilename)
-                    {
-                        retVal = JsonConvert.DeserializeObject<Project>(file.ReadAllText(), JsonSerialization.Default);
-                        if (retVal == null)
-                        {
-                            Console.WriteLine($@"Unable to deserialize {filePath}\{file.FullName}");
-                            return null;
-                        }
-                        retVal.Path = filePath;
-                        RegisterProject(retVal);
-                        continue;
-                    }
-
-                    if (file.FullName == ProgressFilename)
-                    {
-                        readyForeRelease = JsonConvert.DeserializeObject<string[]>(file.ReadAllText(), JsonSerialization.Default);
-                    }
-
-                    if (Path.GetExtension(file.FullName).TrimStart('.') != SceneFileExtension)
-                        continue;
-
-                    var content = file.ReadAllText();
-                    deserializer.AddJson(content, file.FullName);
-                }
-                deserializer.NotifyAllAdded();
-                retVal?.Add(deserializer.GetResult());
-                retVal?.SetReadyForRelease(readyForeRelease);
-                return retVal;
+                return LoadFromStorage(storage);
             }
+        }
+
+        private static Project LoadFromStorage(IFilesStorage storage)
+        {
+            var files = storage.GetFiles();
+            if (files.Length == 0)
+                return null;
+
+            Project retVal = null;
+            string[] readyForeRelease = Array.Empty<string>();
+            BatchDeserializer deserializer = new BatchDeserializer(files.Length - 1);
+            deserializer.Start();
+            foreach (var file in files)
+            {
+                if (file.Name == InfoFilename)
+                {
+                    retVal = JsonConvert.DeserializeObject<Project>(file.ReadAllText(), JsonSerialization.Default);
+                    if (retVal == null)
+                    {
+                        Console.WriteLine($@"Unable to deserialize {storage.Path}\{file.FullName}");
+                        return null;
+                    }
+
+                    retVal.Path = storage.Path;
+                    RegisterProject(retVal);
+                    continue;
+                }
+
+                if (file.Name == ProgressFilename)
+                {
+                    readyForeRelease = JsonConvert.DeserializeObject<string[]>(file.ReadAllText(), JsonSerialization.Default);
+                    continue;
+                }
+
+                if (Path.GetExtension(file.Name).TrimStart('.') != SceneFileExtension)
+                    continue;
+
+                var content = file.ReadAllText();
+                deserializer.AddJson(content, file.FullName);
+            }
+
+            deserializer.NotifyAllAdded();
+            retVal?.Add(deserializer.GetResult());
+            retVal?.SetReadyForRelease(readyForeRelease);
+            return retVal;
         }
 
         public static ProjectHeader[] List(bool ignoreCache = true)
@@ -229,6 +253,9 @@ namespace ScenesEditor.Data
 
         private static void RegisterProject(ProjectHeader header, bool ignoreCache = true)
         {
+            if (ApplicationSettings.EditDefaultDataSetMode)
+                return; // TODO: redesign to avoid mix of responsibilities here
+
             if (string.IsNullOrWhiteSpace(header.Path))
                 throw new ArgumentException("Project's file path is undefined");
             

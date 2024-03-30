@@ -16,5 +16,10 @@ namespace Shared.Utils
         {
             return File.ReadAllText(FullName);
         }
+
+        public override string ToString()
+        {
+            return Name;
+        }
     }
 }

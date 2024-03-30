@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 
 namespace Shared.Utils
@@ -16,6 +17,21 @@ namespace Shared.Utils
         public static bool IsValidFilename(this string file)
         {
             return file.IndexOfAny(UnallowedChars) < 0;
+        }
+
+        public static string ValidateFilename(this string file)
+        {
+            if (file == null)
+                throw new ArgumentNullException(nameof(file));
+            
+            if (file.IndexOfAny(UnallowedChars) < 0)
+                return file;
+
+            for (int i = 0; i < UnallowedChars.Length; i++)
+            {
+                file = file.Replace(UnallowedChars[i], '_');
+            }
+            return file;
         }
     }
 }
