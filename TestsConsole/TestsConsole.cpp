@@ -63,7 +63,7 @@ int main()
     DataHolder content;
     DataLoader::GetResult(content);
     content.Dump(std::cout);
-    auto scene = content.Find("SE Atomic Blowjob");
+    auto scene = content.Find("MyTestsScene2");
 
     {
 		const auto data = std::unique_ptr<Json::JObject>(scene->Custom.GetData());
@@ -88,7 +88,7 @@ int main()
     DataLoader::StartLoading(OnDataLoad);
     DataLoader::WaitForComplete();
     DataLoader::GetResult(content);
-    scene = content.Find("Gray Spanking 02 Staged");
+    scene = content.Find("MyTestsScene");
     if (!scene)
         return 0;
     for(const Data::ActorsContact& contact : scene->ActorsContacts)
@@ -118,7 +118,7 @@ int main()
     if (searcher.TryGetInt(splitted, intVal))
         ILogger::Log("%s = %d", ObjVal1_IntVal2.c_str(), intVal);
     else
-        ILogger::Log("Failed to get string value of %s", ObjVal1_IntVal2.c_str());
+        ILogger::Log("Failed to get int value of %s", ObjVal1_IntVal2.c_str());
 
 
     const std::string ObjVal1_ArrayVal2_0 = SU::ToUpper("ObjVal1_ArrayVal2_0");
