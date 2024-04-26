@@ -360,11 +360,12 @@ const char* EXPORT_PAPYRUS_SCRIPT = AS_EXPORT_PAPYRUS_SCRIPT;
 	VMVariable GetSceneAttributes(StaticFunctionTag* _, BSFixedString sceneId, BSFixedString structName)
 	{
 		// TODO: update when predefined scene attributes introduced
-		const auto custom = GetSceneData<std::unique_ptr<Json::JObject>>(sceneId, [](auto scene){return std::unique_ptr<Json::JObject>(scene->Custom.GetData());});
+		const auto custom = GetSceneData<std::unique_ptr<Json::JObject>>(sceneId, [](auto scene){return scene->Custom.GetData();});
 		if (!custom.has_value())
 			return NoneVar();
 
 		VMValue retVal = SceneStruct::Create(custom.value().get(), structName);
+		D("GetSceneAttributes: returning %s value of %s type", retVal.type.value == VMValue::kType_None ? "None" : "Non-None", structName.c_str());
 		return ToVar(retVal);
 	}
 

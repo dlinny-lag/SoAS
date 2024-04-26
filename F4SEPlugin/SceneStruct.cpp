@@ -29,13 +29,13 @@ inline VMValue FromBool(bool val)
 }
 VMValue SceneStruct::Create(const Json::JObject* data, BSFixedString structName)
 {
-	const auto initializer = [data](UInt64 fieldType, BSFixedString fieldName)
+	const Data::CustomAttributesSearch searcher(data);
+	const auto initializer = [&searcher](UInt64 fieldType, BSFixedString fieldName)
 	{
 		const auto normalizedName = SU::ToUpper(fieldName.c_str());
 		if (SU::StartsFrom(normalizedName.c_str(), Prefix))
 		{
 			const std::vector<std::string_view> splitted = SU::Split(normalizedName.c_str() + PrefixLength, "_");
-			const Data::CustomAttributesSearch searcher(data);
 			switch (fieldType)
 			{
 				case VMValue::kType_Int:

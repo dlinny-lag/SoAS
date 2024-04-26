@@ -100,7 +100,9 @@ int main()
     	const bool isLeftArm = ContactFlag::Is(contact.From, "Is_Left_Arm", isValid);
         ILogger::Log("IsLeftArm=%s", S(isLeftArm));
     }
-    const Data::CustomAttributesSearch searcher(scene->Custom.GetData());
+
+    const auto sceneData = scene->Custom.GetData();
+    const Data::CustomAttributesSearch searcher(sceneData.get());
 
     const std::string StringVal1 = SU::ToUpper("StringVal1");
     std::vector<std::string_view> splitted = SU::Split(StringVal1.c_str(), "_");

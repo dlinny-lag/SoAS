@@ -22,9 +22,9 @@ namespace Data
 		{
 			return data.to_string();
 		}
-		[[nodiscard]] Json::JObject* GetData() const
+		[[nodiscard]]  std::unique_ptr<Json::JObject> GetData() const
 		{
-			return data.Clone();
+			return std::unique_ptr<Json::JObject>(data.Clone());
 		}
 	protected:
 		Json::JObject data;
