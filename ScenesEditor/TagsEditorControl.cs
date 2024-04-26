@@ -43,6 +43,8 @@ namespace ScenesEditor
             UpdateControls();
         }
 
+        public event Action<TagsEditorControl> Updated;
+
         private void UpdateControls()
         {
             tagLabel.Text = category;
@@ -62,7 +64,7 @@ namespace ScenesEditor
                 expectedHeight = e.NewRectangle.Height;
             }
 
-            tagValuesBox.Text = string.Empty;
+            tagValuesBox.Text = "-"; // non empty value to force ContentsResized triggering
             tagValuesBox.ContentsResized += OnContentResized;
             tagValuesBox.Text = string.Join("; ", tags);
             tagValuesBox.ContentsResized -= OnContentResized;
@@ -71,6 +73,7 @@ namespace ScenesEditor
                 tagValuesBox.Height = expectedHeight;
             }
             Height = tagValuesBox.Height + tagValuesBox.Top*2;
+            Updated?.Invoke(this);
         }
 
         protected override void OnClientSizeChanged(EventArgs e)

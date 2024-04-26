@@ -14,6 +14,7 @@ namespace Shared.Utils
             unallowed.Add(',');
             UnallowedChars = unallowed.ToArray();
         }
+
         public static bool IsValidFilename(this string file)
         {
             return file.IndexOfAny(UnallowedChars) < 0;
@@ -24,7 +25,7 @@ namespace Shared.Utils
             if (file == null)
                 throw new ArgumentNullException(nameof(file));
             
-            if (file.IndexOfAny(UnallowedChars) < 0)
+            if (file.IsValidFilename())
                 return file;
 
             for (int i = 0; i < UnallowedChars.Length; i++)

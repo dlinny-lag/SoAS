@@ -1,24 +1,23 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using SceneModel;
+using Shared.Utils;
 
 namespace ScenesEditor
 {
     public sealed partial class SceneTagsControl : UserControl
     {
-        private const int ImportedControlsCount = 6;
-        private const int SceneControlsCount = 7;
-
         private readonly TagsEditorControl[] importedTagControls;
         private readonly TagsEditorControl[] sceneTagControls;
-        private int handlesCreated = 0;
 
+        private HashSet<TagsEditorControl> updatingControls;
         public SceneTagsControl()
         {
             InitializeComponent();
-            sceneTagControls = new TagsEditorControl[SceneControlsCount]
+            sceneTagControls = new []
             {
                 sceneTags,
                 authorsTags,
@@ -29,7 +28,7 @@ namespace ScenesEditor
                 otherTags,
             };
 
-            importedTagControls = new TagsEditorControl[ImportedControlsCount]
+            importedTagControls = new []
             {
                 allTags,
                 furnitureTags,
@@ -38,41 +37,74 @@ namespace ScenesEditor
                 actorTypesTags,
                 unknownTags,
             };
-            UpdateTagsControlsWidth();
+            updatingControls = new HashSet<TagsEditorControl>(sceneTagControls);
+            updatingControls.AddRange(importedTagControls);
+
+            SetTagsControlsWidth();
             tagsPanel.ClientSizeChanged += TagsPanelOnClientSizeChanged;
 
             foreach (var control in importedTagControls)
             {
-                control.HandleCreated += ControlOnHandleCreated;
+                control.Updated += ControlOnUpdatedFirstTime;
             }
             foreach (var control in sceneTagControls)
             {
-                control.HandleCreated += ControlOnHandleCreated;
+                control.Updated += ControlOnUpdatedFirstTime;
                 control.Editable = true;
-                control.TagsChanged += () =>
-                {
-                    UpdateTagsControlsLocation();
-                    TagsChanged?.Invoke();
-                };
+                control.TagsChanged += () => TagsChanged?.Invoke();
             }
         }
 
-        private void ControlOnHandleCreated(object sender, EventArgs e)
+        private void ControlOnUpdatedFirstTime(TagsEditorControl initializedControl)
         {
-            ((TagsEditorControl)sender).HandleCreated -= ControlOnHandleCreated;
-            ++handlesCreated;
-            if (handlesCreated == SceneControlsCount + ImportedControlsCount)
-                UpdateTagsControlsLocation();
+            initializedControl.Updated -= ControlOnUpdatedFirstTime;
+            updatingControls.Remove(initializedControl);
+            if (updatingControls.Count == 0)
+            {
+                updatingControls = null; // sanity check
+                ScheduleLocationsUpdate();
+                foreach (var control in importedTagControls)
+                {
+                    control.Updated += _ => ScheduleLocationsUpdate();
+                }
+                foreach (var control in sceneTagControls)
+                {
+                    control.Updated += _ => ScheduleLocationsUpdate();
+                }
+            }
         }
 
+        private bool needLocationUpdate = true;
+        private bool scheduled = false;
+
+        private void EnsureLocationsUpdated()
+        {
+            scheduled = false;
+            if (!needLocationUpdate)
+                return;
+            UpdateTagsControlsLocation();
+            needLocationUpdate = false;
+        }
+        
+        void ScheduleLocationsUpdate() // method always called from UI thread
+        {
+            needLocationUpdate = true;
+            if (!IsHandleCreated)
+                return; // can't schedule right now
+            
+            if (scheduled)
+                return;
+            BeginInvoke(new Action(EnsureLocationsUpdated));
+            scheduled = true;
+        }
 
         private void TagsPanelOnClientSizeChanged(object sender, EventArgs e)
         {
-            UpdateTagsControlsWidth();
-            UpdateTagsControlsLocation();
+            SetTagsControlsWidth();
+            ScheduleLocationsUpdate();
         }
 
-        private void UpdateTagsControlsWidth()
+        private void SetTagsControlsWidth()
         {
             // imported
             importedGroupBox.Width = tagsPanel.Width - SystemInformation.VerticalScrollBarWidth - tagsPanel.Padding.Horizontal;
@@ -109,7 +141,7 @@ namespace ScenesEditor
             allTags.Tags = scene.RawTags.SelectMany(t => t).ToArray();
 
             sceneTags.Tags = scene.Tags ?? Array.Empty<string>();
-            UpdateTagsControlsLocation();
+            ScheduleLocationsUpdate();
         }
 
         public event Action TagsChanged;
