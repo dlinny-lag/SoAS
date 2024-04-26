@@ -30,6 +30,17 @@ const char* EXPORT_PAPYRUS_SCRIPT = AS_EXPORT_PAPYRUS_SCRIPT;
 	DataHolder scenes;
 	BSReadWriteLock dataLock;
 
+	inline VMVariable ToVar(const VMValue& val)
+	{
+		VMVariable r;
+		r.GetValue() = val;
+		return r;
+	}
+	inline VMVariable NoneVar()
+	{
+		VMVariable r;
+		return r;
+	}
 
 	BSFixedString GetVersionString(StaticFunctionTag* _)
 	{
@@ -248,9 +259,8 @@ const char* EXPORT_PAPYRUS_SCRIPT = AS_EXPORT_PAPYRUS_SCRIPT;
 
 		for (const auto& contact : contacts.value())
 		{
-			VMVariable var;
 			const VMValue val = ContactStruct::Create(contact, structName, actors);
-			var.GetValue() = val;
+			VMVariable var = ToVar(val);
 			retVal.Push(&var);
 		}
 		D("Returning %d actors contacts for scene [%s]", retVal.Length(), sceneId.c_str());
@@ -268,9 +278,8 @@ const char* EXPORT_PAPYRUS_SCRIPT = AS_EXPORT_PAPYRUS_SCRIPT;
 		const std::vector<Actor*> actors = ToVector(participants);
 		for(const auto& contact : contacts.value())
 		{
-			VMVariable var;
 			const VMValue val = ContactStruct::Create(contact, structName, actors);
-			var.GetValue() = val;
+			VMVariable var = ToVar(val);
 			retVal.Push(&var);
 		}
 		return retVal;
@@ -345,17 +354,6 @@ const char* EXPORT_PAPYRUS_SCRIPT = AS_EXPORT_PAPYRUS_SCRIPT;
 		return retVal;
 	}
 
-	inline VMVariable ToVar(VMValue& val)
-	{
-		VMVariable r;
-		r.UnpackVariable(&val);
-		return r;
-	}
-	inline VMVariable NoneVar()
-	{
-		VMVariable r;
-		return r;
-	}
 
 	VMVariable GetSceneAttributes(StaticFunctionTag* _, BSFixedString sceneId, BSFixedString structName)
 	{
@@ -364,8 +362,7 @@ const char* EXPORT_PAPYRUS_SCRIPT = AS_EXPORT_PAPYRUS_SCRIPT;
 		if (!custom.has_value())
 			return NoneVar();
 
-		VMValue retVal = SceneStruct::Create(custom.value().get(), structName);
-		D("GetSceneAttributes: returning %s value of %s type", retVal.type.value == VMValue::kType_None ? "None" : "Non-None", structName.c_str());
+		const VMValue retVal = SceneStruct::Create(custom.value().get(), structName);
 		return ToVar(retVal);
 	}
 
