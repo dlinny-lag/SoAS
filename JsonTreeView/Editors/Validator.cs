@@ -1,16 +1,24 @@
-﻿using System.CodeDom.Compiler;
+﻿using System;
+using System.CodeDom.Compiler;
 using System.Globalization;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
 namespace JsonTreeView.Editors
 {
-    internal static class Validator
+    public static class Validator
     {
+        private static char[] invalidChars = Array.Empty<char>();
+        public static string InvalidChars
+        {
+            get => new string(invalidChars);
+            set => invalidChars = value == null ? Array.Empty<char>() : value.ToCharArray();
+        }
+
         static readonly CodeDomProvider provider = CodeDomProvider.CreateProvider("C#");
         public static bool IsNameValid(this string value)
         {
-            return provider.IsValidIdentifier(value);
+            return provider.IsValidIdentifier(value) && value.IndexOfAny(invalidChars) < 0;
         }
 
         public static JValue ToJValue(this string value)

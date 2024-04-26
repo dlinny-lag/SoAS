@@ -8,6 +8,11 @@ namespace ScenesEditor
 {
     public sealed partial class SceneAttributesControl : UserControl
     {
+        static SceneAttributesControl()
+        {
+            JsonTreeView.Editors.Validator.InvalidChars = "_";
+        }
+
         public SceneAttributesControl()
         {
             InitializeComponent();
