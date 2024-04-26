@@ -100,6 +100,38 @@ int main()
     	const bool isLeftArm = ContactFlag::Is(contact.From, "Is_Left_Arm", isValid);
         ILogger::Log("IsLeftArm=%s", S(isLeftArm));
     }
+    const Data::CustomAttributesSearch searcher(scene->Custom.GetData());
+
+    const std::string StringVal1 = SU::ToUpper("StringVal1");
+    std::vector<std::string_view> splitted = SU::Split(StringVal1.c_str(), "_");
+    std::string str;
+    if (searcher.TryGetString(splitted, str))
+		ILogger::Log("%s = %s", StringVal1.c_str(), str.c_str());
+    else
+        ILogger::Log("Failed to get string value of %s", StringVal1.c_str());
+
+    const std::string ObjVal1_IntVal2 = SU::ToUpper("ObjVal1_IntVal2");
+    splitted = SU::Split(ObjVal1_IntVal2.c_str(), "_");
+    SInt32 intVal;
+    if (searcher.TryGetInt(splitted, intVal))
+        ILogger::Log("%s = %d", ObjVal1_IntVal2.c_str(), intVal);
+    else
+        ILogger::Log("Failed to get string value of %s", ObjVal1_IntVal2.c_str());
+
+
+    const std::string ObjVal1_ArrayVal2_0 = SU::ToUpper("ObjVal1_ArrayVal2_0");
+    splitted = SU::Split(ObjVal1_ArrayVal2_0.c_str(), "_");
+    if (searcher.TryGetString(splitted, str))
+		ILogger::Log("%s = %s", ObjVal1_ArrayVal2_0.c_str(), str.c_str());
+    else
+        ILogger::Log("Failed to get string value of %s", ObjVal1_ArrayVal2_0.c_str());
+
+    const std::string ObjVal1_ArrayVal2_1 = SU::ToUpper("ObjVal1_ArrayVal2_1");
+    splitted = SU::Split(ObjVal1_ArrayVal2_1.c_str(), "_");
+    if (searcher.TryGetString(splitted, str))
+		ILogger::Log("%s = %s", ObjVal1_ArrayVal2_1.c_str(), str.c_str());
+    else
+        ILogger::Log("Failed to get string value of %s", ObjVal1_ArrayVal2_1.c_str());
 
     return 0;
 }
