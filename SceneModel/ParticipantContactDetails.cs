@@ -68,7 +68,7 @@ namespace SceneModel
         }
     }
 
-    public sealed class ParticipantContactDetails : ContactDetails
+    public sealed class ParticipantContactDetails : ContactDetails, IHasDistance<ParticipantContactDetails>
     {
         private BodyPart bodyPart;
         [Ignore]
@@ -228,6 +228,11 @@ namespace SceneModel
                 PainType = PainType,
                 BodyPart = BodyPart,
             };
+        }
+
+        public ulong Distance(ParticipantContactDetails other)
+        {
+            throw new System.NotImplementedException();
         }
     }
 }

@@ -1,26 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using SceneModel.Creatures;
 
 namespace SceneModel
 {
-    public enum EnvironmentDirections
-    {
-        FromEnvironment = 0,
-        FromActor = 1
-    }
-
-    public sealed class EnvironmentContact
-    {
-        public ParticipantContactDetails Details { get; set; } = new ParticipantContactDetails();
-        public EnvironmentDirections Direction { get; set; }
-        public void MakeAlive(IList<Participant> participants)
-        {
-            Details.Participant = participants[Details.ParticipantIndex];
-            Details.MakeAlive();
-            Details.ResolveBodyPart(Details.Participant.GetCreatureTemplate());
-        }
-    }
-
     public abstract class GenericActorsContact<TDetails>
         where TDetails:ContactDetails, new()
     {
@@ -32,7 +15,7 @@ namespace SceneModel
         }
     }
 
-    public sealed class ActorsContact : GenericActorsContact<ParticipantContactDetails>
+    public sealed class ActorsContact : GenericActorsContact<ParticipantContactDetails>, IHasId, IHasDistance<ActorsContact>
     {
         public void MakeAlive(IList<Participant> participants)
         {
@@ -46,6 +29,12 @@ namespace SceneModel
             template = To.Participant.GetCreatureTemplate();
             if (template != null)
                 To.ResolveBodyPart(template);
+        }
+
+        public Guid Id { get; set; }
+        public ulong Distance(ActorsContact other)
+        {
+            throw new NotImplementedException();
         }
     }
 }
