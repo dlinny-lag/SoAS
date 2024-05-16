@@ -34,7 +34,10 @@ namespace SceneModel
         public Guid Id { get; set; }
         public ulong Distance(ActorsContact other)
         {
-            throw new NotImplementedException();
+            ulong retVal = From.Distance(other.From);
+            retVal += To.Distance(other.To);
+
+            return retVal;
         }
     }
 }

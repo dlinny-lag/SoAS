@@ -1,4 +1,5 @@
-﻿using System.ComponentModel;
+﻿using System;
+using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using SceneModel.ContactAreas;
 using SceneModel.Creatures;
@@ -232,7 +233,18 @@ namespace SceneModel
 
         public ulong Distance(ParticipantContactDetails other)
         {
-            throw new System.NotImplementedException();
+            ulong retVal = 0;
+            retVal += ParticipantIndex.Diff(other.ParticipantIndex);
+            retVal += Area.Diff(other.Area);
+            retVal += ReversePath.Diff(other.ReversePath);
+            retVal += stimulation.Diff(other.stimulation);
+            retVal += hold.Diff(other.hold);
+            retVal += pain.Diff(other.pain);
+            retVal += tickle.Diff(other.tickle);
+            retVal += comfort.Diff(other.comfort);
+            retVal += PainType.Diff(other.PainType);
+
+            return retVal;
         }
     }
 }

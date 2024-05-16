@@ -24,7 +24,9 @@ namespace SceneModel
         public Guid Id { get; set; }
         public ulong Distance(EnvironmentContact other)
         {
-            throw new NotImplementedException();
+            ulong retVal = Details.Distance(other.Details);
+            retVal += Direction.Diff(other.Direction);
+            return retVal;
         }
     }
 }
