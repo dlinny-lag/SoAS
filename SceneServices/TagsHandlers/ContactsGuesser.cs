@@ -26,6 +26,52 @@ namespace SceneServices.TagsHandlers
     {
         private const int TagTargetActorIndex = 0; // all contacts points to 0 actor from all other
         private const int VictimActorIndex = 0; // in most cases actor 0 is a victim
+
+
+        private static ulong FindNearest<TContact>(TContact newContact, List<TContact> existing, out TContact found)
+            where TContact : class, IHasDistance<TContact>
+        {
+            ulong min = ulong.MaxValue;
+            found = null;
+            foreach (TContact contact in existing)
+            {
+                ulong distance = newContact.Distance(contact);
+                if (distance < min)
+                {
+                    min = distance;
+                    found = contact;
+                }
+                if (distance == 0)
+                    return distance; // stop iterating on the first exact match. 
+            }
+
+            return min;
+
+        }
+
+        private static void SetContactIDs<TContact>(List<TContact> newContacts, List<TContact> existing)
+            where TContact : class, IHasId, IHasDistance<TContact>
+        {
+            existing = new List<TContact>(existing); // mutable copy
+
+            foreach (TContact contact in newContacts)
+            {
+                ulong distance = FindNearest(contact, existing, out var found);
+                if (found != null)
+                {
+                    existing.Remove(found);
+                    if (distance < 100) // TODO: clarify condition
+                        contact.Id = found.Id;
+                }
+
+                if (contact.Id == Guid.Empty) 
+                    contact.Id = Guid.NewGuid();
+            
+            }
+            if (existing.Count > 0)
+                Console.WriteLine("Some contacts disappeared"); // TODO: pop up the message
+        }
+
         public static ActorsGuess GuessActorContacts(this Scene scene)
         {
             ActorsGuess retVal = new ActorsGuess();
@@ -34,6 +80,8 @@ namespace SceneServices.TagsHandlers
             retVal.InitVictimsAggressors(scene);
             retVal.InitNumeric(scene);
             retVal.InitMissing(scene);
+
+            SetContactIDs(retVal.Contacts, scene.ActorsContacts);
             return retVal;
         }
 
@@ -246,6 +294,7 @@ namespace SceneServices.TagsHandlers
             if (scene.NeckFromBadEnd(retVal.Contacts))
                 retVal.VictimIndices.Add(0);
 
+            SetContactIDs(retVal.Contacts, scene.EnvironmentContacts);
             return retVal;
         }
 

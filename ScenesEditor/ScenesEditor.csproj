@@ -129,6 +129,7 @@
     <Compile Include="Program.cs" />
     <Compile Include="Data\Project.cs" />
     <Compile Include="Data\ProjectSerialization.cs" />
+    <Compile Include="ProjectDataValidation.cs" />
     <Compile Include="ProjectEditDialog.cs">
       <SubType>Form</SubType>
     </Compile>

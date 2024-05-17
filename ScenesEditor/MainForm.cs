@@ -27,15 +27,17 @@ namespace ScenesEditor
                 projectsListControl.Visible = true;
 
                 projectsListControl.SetData(ProjectSerialization.List());
-                projectWorkspace.Changed += () =>
-                {
-                    dirty = true;
-                    UpdateTitle();
-                };
+                projectWorkspace.Changed += SetDirty;
             }
 
             UpdateTitle();
             ApplicationSettings.FurnitureLibrary.Load();
+        }
+
+        private void SetDirty()
+        {
+            dirty = true;
+            UpdateTitle();
         }
 
         private void UpdateTitle()
@@ -150,6 +152,9 @@ namespace ScenesEditor
 
         void OpenProject(Project project)
         {
+            if (project.ValidateData())
+                SetDirty();
+
             currentProject = project;
             projectWorkspace.Project = currentProject;
             projectWorkspace.Visible = true;
