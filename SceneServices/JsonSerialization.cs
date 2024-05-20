@@ -45,6 +45,11 @@ namespace SceneServices
             return retVal;
         }
 
+        public static ScenePatch ToScenePatch(this string json)
+        {
+            var retVal = JsonConvert.DeserializeObject<ScenePatch>(json, Default);
+            return retVal;
+        }
         public static string ToJson(this Scene scene, bool formatted = false)
         {
             return JsonConvert.SerializeObject(scene, formatted ? Formatted : Default);

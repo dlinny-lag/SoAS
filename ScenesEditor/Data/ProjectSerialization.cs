@@ -11,6 +11,7 @@ namespace ScenesEditor.Data
     public static class ProjectSerialization
     {
         public static readonly string ProjectFileExtension = "scproj";
+        public static readonly string PatchProjectFileExtension = "scpproj";
         public static readonly string SceneFileExtension = "scene";
         public static readonly string ScenesPackFileExtension = "scenes";
         public static readonly string ESPFileExtension = "esl";
@@ -35,6 +36,15 @@ namespace ScenesEditor.Data
             return string.Compare(projectPath, folder, StringComparison.OrdinalIgnoreCase) == 0;
         }
 
+        public static ProjectType ProjectTypeFromFileExtension(this string path)
+        {
+            if (path.EndsWith(ProjectFileExtension, StringComparison.OrdinalIgnoreCase))
+                return ProjectType.Overwrite;
+            if (path.EndsWith(PatchProjectFileExtension, StringComparison.OrdinalIgnoreCase))
+                return ProjectType.Patch;
+            return ProjectType.None;
+        }
+
         public static void Save(this Project project, string folderPath)
         {
             if (ApplicationSettings.EditDefaultDataSetMode)
@@ -57,7 +67,13 @@ namespace ScenesEditor.Data
             RegisterProject(project, pathChanged);
         }
 
-        private static bool InitPath(Project project, string folderPath)
+        public static void Save(this PatchProject project, string folderPath)
+        {
+            throw new NotImplementedException();
+        }
+
+
+        private static bool InitPath(ProjectHeader project, string folderPath)
         {
             string projectFile = Path.Combine(folderPath, $"{project.Name}.{ProjectFileExtension}");
             bool pathChanged = !string.Equals(projectFile, project.Path, StringComparison.OrdinalIgnoreCase);
@@ -177,35 +193,65 @@ namespace ScenesEditor.Data
         public static Project LoadDefaultDataSetFromFolder(string path)
         {
             var storage = new FileSystemFilesStorage(path, true);
-            return LoadFromStorage(storage);
+            return LoadAsProject(storage);
         }
 
-        public static Project Load(string filePath)
+
+        public static TProject Load<TProject>(string filePath)
+            where TProject : ProjectHeader
         {
             using (var storage = new ZipStorage(filePath, true))
             {
-                return LoadFromStorage(storage);
+                if (typeof(TProject) == typeof(Project))
+                {
+                    return LoadAsProject(storage) as TProject;
+                }
+
+                if (typeof(TProject) == typeof(PatchProject))
+                {
+                    return LoadAsPatchProject(storage) as TProject;
+                }
             }
+
+            throw new InvalidOperationException($"Unknown project type {typeof(TProject).FullName}");
         }
 
-        private static Project LoadFromStorage(IFilesStorage storage)
+        private static Project LoadAsProject(IFilesStorage storage)
         {
+            var retVal = LoadFromStorage<Project, Scene>(storage, JsonSerialization.ToScene, out var readyForeRelease, out var items);
+            retVal?.Add(items);
+            retVal?.SetReadyForRelease(readyForeRelease);
+            return retVal;
+        }
+
+        private static PatchProject LoadAsPatchProject(IFilesStorage storage)
+        {
+            var retVal = LoadFromStorage<PatchProject, ScenePatch>(storage, JsonSerialization.ToScenePatch, out var readyForeRelease, out var items);
+            retVal.Patches = new List<ScenePatch>(items ?? Array.Empty<ScenePatch>());
+            return retVal;
+        }
+
+        private static TProject LoadFromStorage<TProject, TI>(IFilesStorage storage, Func<string, TI> deserializer, out string[] readyForeRelease, out IList<TI> items)
+            where TProject : ProjectHeader
+        {
+            readyForeRelease = null;
+            items = null;
             var files = storage.GetFiles();
             if (files.Length == 0)
                 return null;
 
-            Project retVal = null;
-            string[] readyForeRelease = Array.Empty<string>();
-            BatchDeserializer deserializer = new BatchDeserializer(files.Length - 1);
-            deserializer.Start();
+            TProject retVal = null;
+            BatchDeserializer<TI> batchDeserializer = new BatchDeserializer<TI>(deserializer, files.Length - 1);
+            batchDeserializer.Start();
             foreach (var file in files)
             {
                 if (file.Name == InfoFilename)
                 {
-                    retVal = JsonConvert.DeserializeObject<Project>(file.ReadAllText(), JsonSerialization.Default);
+                    retVal = JsonConvert.DeserializeObject<TProject>(file.ReadAllText(), JsonSerialization.Default);
                     if (retVal == null)
                     {
                         Console.WriteLine($@"Unable to deserialize {storage.Path}\{file.FullName}");
+                        // TODO: cancel BatchDeserializer process
                         return null;
                     }
 
@@ -224,12 +270,12 @@ namespace ScenesEditor.Data
                     continue;
 
                 var content = file.ReadAllText();
-                deserializer.AddJson(content, file.FullName);
+                batchDeserializer.AddJson(content, file.FullName);
             }
 
-            deserializer.NotifyAllAdded();
-            retVal?.Add(deserializer.GetResult());
-            retVal?.SetReadyForRelease(readyForeRelease);
+            batchDeserializer.NotifyAllAdded();
+            items = batchDeserializer.GetResult();
+            
             return retVal;
         }
 

@@ -32,15 +32,16 @@ namespace ScenesEditor
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.newToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.newPatchToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.saveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.openToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.projectsListControl = new ProjectsListControl();
-            this.projectWorkspace = new ProjectWorkspace();
             this.toolsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.furnitureToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.projectsListControl = new ScenesEditor.ProjectsListControl();
+            this.projectWorkspace = new ScenesEditor.ProjectWorkspace();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -60,6 +61,7 @@ namespace ScenesEditor
             // 
             this.fileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.newToolStripMenuItem,
+            this.newPatchToolStripMenuItem,
             this.saveToolStripMenuItem,
             this.openToolStripMenuItem,
             this.exitToolStripMenuItem});
@@ -73,7 +75,15 @@ namespace ScenesEditor
             this.newToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.N)));
             this.newToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.newToolStripMenuItem.Text = "New";
-            this.newToolStripMenuItem.Click += new System.EventHandler(this.newToolStripMenuItem_Click);
+            this.newToolStripMenuItem.Click += new System.EventHandler(this.NewProjectMenuItemClick);
+            // 
+            // newPatchToolStripMenuItem
+            // 
+            this.newPatchToolStripMenuItem.Name = "newPatchToolStripMenuItem";
+            this.newPatchToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.P)));
+            this.newPatchToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.newPatchToolStripMenuItem.Text = "New Patch";
+            this.newPatchToolStripMenuItem.Click += new System.EventHandler(this.NewPatchProjectMenuItemClick);
             // 
             // saveToolStripMenuItem
             // 
@@ -99,6 +109,21 @@ namespace ScenesEditor
             this.exitToolStripMenuItem.Text = "Exit";
             this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
             // 
+            // toolsToolStripMenuItem
+            // 
+            this.toolsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.furnitureToolStripMenuItem});
+            this.toolsToolStripMenuItem.Name = "toolsToolStripMenuItem";
+            this.toolsToolStripMenuItem.Size = new System.Drawing.Size(47, 20);
+            this.toolsToolStripMenuItem.Text = "Tools";
+            // 
+            // furnitureToolStripMenuItem
+            // 
+            this.furnitureToolStripMenuItem.Name = "furnitureToolStripMenuItem";
+            this.furnitureToolStripMenuItem.Size = new System.Drawing.Size(122, 22);
+            this.furnitureToolStripMenuItem.Text = "Furniture";
+            this.furnitureToolStripMenuItem.Click += new System.EventHandler(this.furnitureToolStripMenuItem_Click);
+            // 
             // helpToolStripMenuItem
             // 
             this.helpToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -110,7 +135,7 @@ namespace ScenesEditor
             // aboutToolStripMenuItem
             // 
             this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
-            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(107, 22);
             this.aboutToolStripMenuItem.Text = "About";
             this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click);
             // 
@@ -135,21 +160,6 @@ namespace ScenesEditor
             this.projectWorkspace.Size = new System.Drawing.Size(738, 317);
             this.projectWorkspace.TabIndex = 5;
             // 
-            // toolsToolStripMenuItem
-            // 
-            this.toolsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.furnitureToolStripMenuItem});
-            this.toolsToolStripMenuItem.Name = "toolsToolStripMenuItem";
-            this.toolsToolStripMenuItem.Size = new System.Drawing.Size(47, 20);
-            this.toolsToolStripMenuItem.Text = "Tools";
-            // 
-            // furnitureToolStripMenuItem
-            // 
-            this.furnitureToolStripMenuItem.Name = "furnitureToolStripMenuItem";
-            this.furnitureToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.furnitureToolStripMenuItem.Text = "Furniture";
-            this.furnitureToolStripMenuItem.Click += new System.EventHandler(this.furnitureToolStripMenuItem_Click);
-            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -161,7 +171,6 @@ namespace ScenesEditor
             this.MainMenuStrip = this.menuStrip1;
             this.Name = "MainForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "";
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
             this.ResumeLayout(false);
@@ -182,6 +191,7 @@ namespace ScenesEditor
         private ProjectWorkspace projectWorkspace;
         private System.Windows.Forms.ToolStripMenuItem toolsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem furnitureToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem newPatchToolStripMenuItem;
     }
 }
 

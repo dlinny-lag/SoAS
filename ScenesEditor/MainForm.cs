@@ -9,7 +9,7 @@ namespace ScenesEditor
 {
     public sealed partial class MainForm : Form
     {
-        private Project currentProject;
+        private ProjectHeader currentProject;
         private const string Title = "Semantics of Animation Scenes";
         private bool dirty = false;
         public MainForm()
@@ -75,8 +75,25 @@ namespace ScenesEditor
             DialogResult result = DialogResult.OK;
             try
             {
-                var loaded = ProjectSerialization.Load(project.Path);
-                OpenProject(loaded);
+                switch (project.Path.ProjectTypeFromFileExtension())
+                {
+                    case ProjectType.Overwrite:
+                        {
+                            var loaded = ProjectSerialization.Load<Project>(project.Path);
+                            OpenProject(loaded);
+                        }
+                        break;
+                    case ProjectType.Patch:
+                        {
+                            var loaded = ProjectSerialization.Load<PatchProject>(project.Path);
+                            OpenProject(loaded.GenerateProject());
+                        }
+                        break;
+                    default:
+                        throw new InvalidOperationException("Unrecognized project type");
+                }
+                
+                
             }
             catch (Exception e)
             {
@@ -108,7 +125,7 @@ namespace ScenesEditor
             Close();
         }
         
-        private void newToolStripMenuItem_Click(object sender, EventArgs e)
+        private void NewProjectMenuItemClick(object sender, EventArgs e)
         {
             Project newProject = new Project();
             string folder;
@@ -135,28 +152,46 @@ namespace ScenesEditor
                 }
             }
         }
+
+        private void NewPatchProjectMenuItemClick(object sender, EventArgs e)
+        {
+            throw new NotImplementedException();
+        }
+
         private void saveToolStripMenuItem_Click(object sender, EventArgs e)
         {
             if (currentProject == null)
                 return;
-            currentProject.Save(Path.GetDirectoryName(currentProject.Path));
+            if (currentProject is Project p)
+                p.Save(Path.GetDirectoryName(currentProject.Path));
+            if (currentProject is PatchProject pp)
+                pp.Save(Path.GetDirectoryName(currentProject.Path));
             dirty = false;
             UpdateTitle();
         }
 
         private void openToolStripMenuItem_Click(object sender, EventArgs e)
         {
-
             // OpenProject()
         }
 
-        void OpenProject(Project project)
+        void OpenProject(ProjectHeader project)
         {
-            if (project.ValidateData())
+            Project editingProject = project as Project;
+            PatchProject patchProject = project as PatchProject;
+            
+            if (editingProject.ValidateData())
                 SetDirty();
 
+            if (patchProject != null)
+            {
+                editingProject = patchProject.GenerateProject();
+                if (editingProject.ValidateData())
+                    return; // TODO: show a message about invalid project
+            }
+
             currentProject = project;
-            projectWorkspace.Project = currentProject;
+            projectWorkspace.Project = editingProject;
             projectWorkspace.Visible = true;
             projectsListControl.Visible = false; // TODO: dispose?
             UpdateTitle();

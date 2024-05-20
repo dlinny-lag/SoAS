@@ -8,7 +8,7 @@ using SceneServices;
 
 namespace ScenesEditor.Data
 {
-    public class BatchDeserializer
+    public class BatchDeserializer<T>
     {
         struct JobItem
         {
@@ -26,10 +26,13 @@ namespace ScenesEditor.Data
         private bool canEnqueue = true;
         private readonly object queueLock = new object();
         private readonly Queue<JobItem> jsons = new Queue<JobItem>();
-        private readonly ConcurrentDictionary<Scene, int> deserialized;
-        public BatchDeserializer(int capacity)
+        private readonly ConcurrentDictionary<T, int> deserialized;
+
+        private Func<string, T> deserializer;
+        public BatchDeserializer(Func<string, T> deserializer, int capacity)
         {
-            deserialized = new ConcurrentDictionary<Scene, int>(Environment.ProcessorCount, capacity);
+            this.deserializer = deserializer ?? throw new ArgumentNullException(nameof(deserializer));
+            deserialized = new ConcurrentDictionary<T, int>(Environment.ProcessorCount, capacity);
             addingFinished = new ManualResetEvent(false);
         }
 
@@ -53,7 +56,7 @@ namespace ScenesEditor.Data
 
         private void ProcessJson(ref JobItem item)
         {
-            Scene result = item.Json.ToScene();
+            T result = deserializer(item.Json);
             if (result == null)
             {
                 Console.WriteLine($@"Unable to deserialize {item.Name}");
@@ -104,10 +107,10 @@ namespace ScenesEditor.Data
             }
         }
 
-        public IList<Scene> GetResult()
+        public IList<T> GetResult()
         {
             Task.WhenAll(runningTasks).Wait(); // block execution
-            var retVal = new List<Scene>(deserialized.Keys);
+            var retVal = new List<T>(deserialized.Keys);
             retVal.Sort((a, b) => deserialized[a].CompareTo(deserialized[b]));
             return retVal;
         }

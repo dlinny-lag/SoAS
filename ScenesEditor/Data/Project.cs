@@ -7,6 +7,13 @@ using Shared.Utils;
 
 namespace ScenesEditor.Data
 {
+    public enum ProjectType
+    {
+        None,
+        Overwrite,
+        Patch
+    }
+
     public class ProjectHeader
     {
         public string Name { get; set; }
@@ -106,6 +113,26 @@ namespace ScenesEditor.Data
         public int Remove(params Scene[] toDelete)
         {
             return Remove((ICollection<Scene>)toDelete);
+        }
+    }
+
+    public sealed class PatchProject : ProjectHeader
+    {
+        /// <summary>
+        /// content of a <see cref="ProjectSerialization.ScenesPackFileExtension">released package</see>. may contain patches of another package
+        /// </summary>
+        public byte[] PatchingPack { get; set; }
+
+        public IList<ScenePatch> Patches { get; set; }
+
+        public Project GenerateProject()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void InitPatches(Project changes)
+        {
+            throw new NotImplementedException();
         }
     }
 }

@@ -7,6 +7,11 @@ namespace ScenesEditor
 {
     public static class ProjectDataValidation
     {
+        /// <summary>
+        /// Returns true if validation process changes something
+        /// </summary>
+        /// <param name="project"></param>
+        /// <returns></returns>
         public static bool ValidateData(this Project project)
         {
             bool changed = false;
