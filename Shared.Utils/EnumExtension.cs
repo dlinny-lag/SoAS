@@ -2,6 +2,7 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq.Expressions;
+using System.Runtime.CompilerServices;
 
 namespace Shared.Utils
 {
@@ -42,7 +43,7 @@ namespace Shared.Utils
 
             static FlagEnumHandler()
             {
-                if (!typeof(T).IsEnum || !typeof(T).IsDefined(typeof(FlagsAttribute), false))
+                if (!typeof(T).IsEnum || !IsFlagEnum<T>())
                     throw new InvalidOperationException($"{typeof(T).FullName} must be a flag enum");
                 Or = GetOr();
                 IsNone = EnumHandler<T>.IsNone;
@@ -76,12 +77,14 @@ namespace Shared.Utils
             }
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static T Or<T>(this T value, T anotherValue)
             where T:Enum
         {
             return FlagEnumHandler<T>.Or(value, anotherValue);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool IsNone<T>(this T value)
             where T:Enum
         {
@@ -100,6 +103,14 @@ namespace Shared.Utils
                 allFlags = allFlags.Or(flags[i]);
 
             return FlagEnumHandler<T>.HasAnyFlag(value, allFlags);
+        }
+
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static bool IsTrue<T>(this T enumVal)
+            where T:Enum
+        {
+            return !FlagEnumHandler<T>.IsNone(enumVal);
         }
     }
 }

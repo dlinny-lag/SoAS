@@ -4,6 +4,7 @@ using System.Text;
 using System.Windows.Forms;
 using ScenesEditor.Data;
 using Shared.Controls;
+using Shared.Utils;
 
 namespace ScenesEditor
 {
@@ -177,16 +178,20 @@ namespace ScenesEditor
 
         void OpenProject(ProjectHeader project)
         {
+            if (project == null)
+                return;
+
             Project editingProject = project as Project;
             PatchProject patchProject = project as PatchProject;
             
-            if (editingProject.ValidateData())
+
+            if (editingProject.ValidateData().IsTrue())
                 SetDirty();
 
             if (patchProject != null)
             {
                 editingProject = patchProject.GenerateProject();
-                if (editingProject.ValidateData())
+                if (editingProject.ValidateData().HasAnyOfFlags(ValidationChanges.ContactId))
                     return; // TODO: show a message about invalid project
             }
 

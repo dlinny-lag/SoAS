@@ -5,6 +5,13 @@ using ScenesEditor.Data;
 
 namespace ScenesEditor
 {
+    [Flags]
+    public enum ValidationChanges
+    {
+        None = 0,
+        ContactId = 1,
+    }
+
     public static class ProjectDataValidation
     {
         /// <summary>
@@ -12,26 +19,26 @@ namespace ScenesEditor
         /// </summary>
         /// <param name="project"></param>
         /// <returns></returns>
-        public static bool ValidateData(this Project project)
+        public static ValidationChanges ValidateData(this Project project)
         {
-            bool changed = false;
-            changed |= InitContactIds(project);
-            return changed;
+            ValidationChanges change = ValidationChanges.None;
+            change |= InitContactIds(project);
+            return change;
         }
 
-        private static bool InitContactIds(Project project)
+        private static ValidationChanges InitContactIds(Project project)
         {
-            bool changed = false;
+            ValidationChanges change = ValidationChanges.None;
             foreach (IHasId contact in project.Scenes.SelectMany(s => s.ActorsContacts.Union<IHasId>(s.EnvironmentContacts)))
             {
                 if (contact.Id == Guid.Empty)
                 {
-                    changed = true;
+                    change = ValidationChanges.ContactId;
                     contact.Id = Guid.NewGuid();
                 }
             }
 
-            return changed;
+            return change;
         }
     }
 }
