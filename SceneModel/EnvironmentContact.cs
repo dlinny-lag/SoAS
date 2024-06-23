@@ -20,7 +20,8 @@ namespace SceneModel
             Details.MakeAlive();
             Details.ResolveBodyPart(Details.Participant.GetCreatureTemplate());
         }
-
+        
+        [PK]
         public Guid Id { get; set; }
         public ulong Distance(EnvironmentContact other)
         {

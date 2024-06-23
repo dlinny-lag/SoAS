@@ -30,7 +30,7 @@ namespace SceneModel
             if (template != null)
                 To.ResolveBodyPart(template);
         }
-
+        [PK]
         public Guid Id { get; set; }
         public ulong Distance(ActorsContact other)
         {

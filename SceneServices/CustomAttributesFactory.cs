@@ -44,7 +44,7 @@ namespace SceneServices
                 new JsonMergeSettings
                 {
                     MergeArrayHandling = MergeArrayHandling.Replace, // TODO: how to handle arrays?
-                    PropertyNameComparison = StringComparison.InvariantCultureIgnoreCase,
+                    PropertyNameComparison = StringComparison.OrdinalIgnoreCase,
                     MergeNullValueHandling = MergeNullValueHandling.Merge
                 });
             return retVal.ToAttributes();
