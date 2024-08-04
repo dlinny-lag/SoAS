@@ -1,6 +1,8 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 using System.Reflection;
+using System.Text;
 using System.Xml;
 using AAFModel;
 
@@ -53,36 +55,73 @@ namespace AAF.Services
 
 #region errors handling
 
-        private const string FakeRoot = "fake_root";
-        private const string triplet = "---";
-        /// <summary>
-        ///  Several XML files are badly formatted.
-        /// </summary>
-        /// <param name="content"></param>
-        /// <returns></returns>
         static string FixComments(string content)
         {
+            if (FixTripletDash(content, out content))
+                return content;
+            return FixBadSymbolsInsideComment(content);
+        }
+
+        private const string FakeRoot = "fake_root";
+        private const string triplet = "---";
+        static bool FixTripletDash(string original, out string updated)
+        {
+            updated = original;
             int index = 1;
+            bool retVal = false;
             do
             {
-                index = content.IndexOf(triplet, index, StringComparison.InvariantCultureIgnoreCase);
+                index = updated.IndexOf(triplet, index, StringComparison.InvariantCultureIgnoreCase);
                 if (index > 0)
                 {
                     int ending = index + triplet.Length;
-                    for (int i = ending; i < content.Length; i++)
+                    for (int i = ending; i < updated.Length; i++)
                     {
-                        if (content[i] != '-')
+                        if (updated[i] != '-')
                         {
                             ending = i;
                             break;
                         }
                     }
 
-                    content = content.Substring(0, index) + "--" + content.Substring(ending);
+                    updated = updated.Substring(0, index) + "--" + updated.Substring(ending);
+                    retVal = true;
                 }
 
                 index++;
-            } while (index > 0 && index < content.Length);
+            } while (index > 0 && index < updated.Length);
+
+            return retVal;
+        }
+
+        private const string CommentStart = "<!--";
+        private const string CommentEnd = "-->";
+        static string FixBadSymbolsInsideComment(string content)
+        {
+            int start = 0;
+            do
+            {
+                start = content.IndexOf(CommentStart, start, StringComparison.Ordinal);
+                if (start < 0)
+                    break;
+                int end = content.IndexOf(CommentEnd, start + CommentStart.Length, StringComparison.Ordinal);
+                if (end < 0)
+                    break;
+
+                string begin = content.Substring(0, start + CommentStart.Length + 1);
+                string tail = content.Substring(end, content.Length - end);
+
+                // we should remove all content inside comment, but we need to keep amount of lines
+                // soo count newline symbols and insert them only
+                string inside = content.Substring(start, end - start + CommentEnd.Length);
+                int newLineCount = inside.Count(c => c == '\n');
+                inside = new string('\n', newLineCount);
+
+                content = begin + inside + tail;
+
+                start += CommentStart.Length + CommentEnd.Length + 1;
+
+            } while (start < content.Length);
 
             return content;
         }
