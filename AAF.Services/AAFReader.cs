@@ -33,7 +33,7 @@ namespace AAF.Services
             return ProcessAny;
         }
 
-        public AAFData ReadAll()
+        public AAFData ReadAll(bool showXmlErrors)
         { // TODO: optimize
             AAFData retVal = new AAFData();
             foreach (IFileDescriptor fi in aafFolder.GetFiles())
@@ -44,10 +44,11 @@ namespace AAF.Services
                 string fileName = fi.FullName;
 
                 XmlDocument doc;
+                LoadException error = null;
                 try
                 {
                     string content = File.ReadAllText(fileName);
-                    doc = XmlFileLoader.LoadString(content);
+                    doc = XmlFileLoader.LoadString(content, ref error);
                     if (doc == null)
                         continue; // empty file. silently skip it
                 }
@@ -55,6 +56,11 @@ namespace AAF.Services
                 {
                     retVal.FailedFiles.Add(fileName, e);
                     continue;
+                }
+
+                if (error != null && showXmlErrors)
+                {
+                    retVal.FailedFiles.Add(fileName, error);
                 }
                 Defaults defs = GetDefaults(doc);
                 retVal.Files.Add(fileName, defs);

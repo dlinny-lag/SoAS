@@ -12,7 +12,7 @@ namespace AAF.Services
     {
         static readonly XmlReaderSettings settings = new XmlReaderSettings { IgnoreComments = true };
 
-        public static XmlDocument LoadString(string content)
+        public static XmlDocument LoadString(string content, ref LoadException error)
         {
             if (string.IsNullOrWhiteSpace(content))
                 return null;
@@ -27,23 +27,26 @@ namespace AAF.Services
             }
             catch (XmlException ex)
             {
+                if (error == null)
+                    error = new LoadException(content, ex); // store first error only
+
                 if (ex.IsMultipleRoots())
                 {
-                    return LoadString($"<{FakeRoot}>{content}</{FakeRoot}>");
+                    return LoadString($"<{FakeRoot}>{content}</{FakeRoot}>", ref error);
                 }
                 if (ex.IsWrongComment())
                 {
-                    return LoadString(FixComments(content));
+                    return LoadString(FixComments(content), ref error);
                 }
 
                 if (ex.IsWrongAmpersand1())
                 {
-                    return LoadString(FixAmpersand(content));
+                    return LoadString(FixAmpersand(content), ref error);
                 }
 
                 if (ex.IsWrongAmpersand2(content))
                 {
-                    return LoadString(FixAmpersand(content));
+                    return LoadString(FixAmpersand(content), ref error);
                 }
                 throw new LoadException(content, ex);
             }

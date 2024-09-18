@@ -191,7 +191,7 @@ namespace ScenesEditor
             
             var reader = new AAFReader(new FileSystemFilesStorage(ImportingFolder));
 
-            return reader.ReadAll();
+            return reader.ReadAll(false);
         }
 
         private void scanBtn_Click(object sender, EventArgs e)

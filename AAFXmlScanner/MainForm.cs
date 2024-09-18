@@ -57,7 +57,7 @@ namespace AAFXmlScanner
             if (reader == null)
                 reader = new AAFReader(new FileSystemFilesStorage(aafFolderPath.Text));
 
-            return reader.ReadAll();
+            return reader.ReadAll(chkStrictMode.Checked);
         }
 
         private void selectAAFFolderBtn_Click(object sender, System.EventArgs e)

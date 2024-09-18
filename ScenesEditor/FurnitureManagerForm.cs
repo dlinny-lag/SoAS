@@ -53,7 +53,7 @@ namespace ScenesEditor
 
             var reader = new AAFReader(new FileSystemFilesStorage(Path.Combine(ApplicationSettings.FurnitureLibrary.Fallout4Path, "Data", "AAF"))); // TODO: NAF folder
 
-            var data = reader.ReadAll();
+            var data = reader.ReadAll(false);
             ApplicationSettings.FurnitureLibrary.Register(data.Furniture.Values);
             ApplicationSettings.FurnitureLibrary.Save();
             FillTree();

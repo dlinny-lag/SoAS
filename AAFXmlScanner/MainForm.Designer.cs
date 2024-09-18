@@ -29,6 +29,7 @@ namespace AAFXmlScanner
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.selectAAFFolderBtn = new System.Windows.Forms.Button();
             this.aafFolderPath = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
@@ -46,6 +47,8 @@ namespace AAFXmlScanner
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.btnExport = new System.Windows.Forms.Button();
             this.btnStatistics = new System.Windows.Forms.Button();
+            this.chkStrictMode = new System.Windows.Forms.CheckBox();
+            this.toolTips = new System.Windows.Forms.ToolTip(this.components);
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.SuspendLayout();
@@ -237,11 +240,23 @@ namespace AAFXmlScanner
             this.btnStatistics.UseVisualStyleBackColor = true;
             this.btnStatistics.Click += new System.EventHandler(this.btnStatistics_Click);
             // 
+            // chkStrictMode
+            // 
+            this.chkStrictMode.AutoSize = true;
+            this.chkStrictMode.Location = new System.Drawing.Point(94, 51);
+            this.chkStrictMode.Name = "chkStrictMode";
+            this.chkStrictMode.Size = new System.Drawing.Size(79, 17);
+            this.chkStrictMode.TabIndex = 18;
+            this.chkStrictMode.Text = "Strict mode";
+            this.toolTips.SetToolTip(this.chkStrictMode, "Show XML syntax errors");
+            this.chkStrictMode.UseVisualStyleBackColor = true;
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(447, 263);
+            this.Controls.Add(this.chkStrictMode);
             this.Controls.Add(this.btnStatistics);
             this.Controls.Add(this.btnExport);
             this.Controls.Add(this.groupBox2);
@@ -280,6 +295,8 @@ namespace AAFXmlScanner
         private System.Windows.Forms.GroupBox groupBox2;
         private System.Windows.Forms.Button btnExport;
         private System.Windows.Forms.Button btnStatistics;
+        private System.Windows.Forms.CheckBox chkStrictMode;
+        private System.Windows.Forms.ToolTip toolTips;
     }
 }
 
